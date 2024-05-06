@@ -1,0 +1,25 @@
+#spring.application.name=animestore
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/animestore?characterEncoding=UTF-8
+    username: root
+    password: Abc12345@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  servlet:
+    multipart:
+      max-file-size: 10MB
+jwt:
+#   them sau
+  privateKey: 005c5cdb-5b69-4443-be89-3a60280993df
+fileUpload:
+  rootPath: ..\animestore\uploads
+
+
