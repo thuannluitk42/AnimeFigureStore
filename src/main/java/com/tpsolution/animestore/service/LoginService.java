@@ -24,6 +24,10 @@ public class LoginService implements LoginServiceImp {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    private String encodePassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
     @Override
     public boolean checkLogin(String username, String password){
         Users user = usersRepository.findByUsername(username);
@@ -34,17 +38,16 @@ public class LoginService implements LoginServiceImp {
     public boolean addUser(SignUpRequest signUpRequest) {
         Users users = new Users();
 
-        Roles roles = new Roles();
         Set<Roles> setRolesRequest = new HashSet<>();
 
         for (Integer item: signUpRequest.getRoleId()) {
-            roles = rolesRepository.findByRoleId(item);
+            Roles roles = rolesRepository.findByRoleId(item);
             setRolesRequest.add(roles);
         }
 
         users.setFullname(signUpRequest.getFullName());
         users.setUsername(signUpRequest.getEmail());
-        users.setPassword(signUpRequest.getPassword());
+        users.setPassword(encodePassword(signUpRequest.getPassword()));
         users.setRoles(setRolesRequest);
         try {
             usersRepository.save(users);

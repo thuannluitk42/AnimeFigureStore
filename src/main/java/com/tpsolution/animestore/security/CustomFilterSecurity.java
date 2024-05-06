@@ -19,8 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-@Configuration // trong luc start ung dung, spring se quet lop nay nhu 1 lop config
-@EnableWebSecurity// bat web security
+@Configuration
+@EnableWebSecurity
 public class CustomFilterSecurity {
 
     @Autowired

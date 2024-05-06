@@ -17,8 +17,7 @@ spring:
     multipart:
       max-file-size: 10MB
 jwt:
-#   them sau
-  privateKey: 005c5cdb-5b69-4443-be89-3a60280993df
+  privateKey: s30AjBawg1JBD92Gab5t8UDzl/+WSSug1VmLErKG8JA=
 fileUpload:
   rootPath: ..\animestore\uploads
 

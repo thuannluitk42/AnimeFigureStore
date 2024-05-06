@@ -24,6 +24,9 @@ public class Roles {
     @Column(name = "role_name", length = 50, nullable = false, unique = true)
     private String roleName;
 
+    @Column(name = "roles_descripion",nullable = true)
+    private String rolesDescripion;
+
     @Column(name = "is_deleted",nullable = true)
     private boolean isDeleted;
 
