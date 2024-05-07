@@ -48,6 +48,7 @@ public class LoginService implements LoginServiceImp {
         users.setFullname(signUpRequest.getFullName());
         users.setUsername(signUpRequest.getEmail());
         users.setPassword(encodePassword(signUpRequest.getPassword()));
+        users.setDeleted(false);
         users.setRoles(setRolesRequest);
         try {
             usersRepository.save(users);
