@@ -54,15 +54,18 @@ public class CustomFilterSecurity {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
+//        http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
+//                .csrf(AbstractHttpConfigurer::disable)
 //                .httpBasic(withDefaults())
-                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests( request -> {
-                    request.requestMatchers("/login/**").permitAll();
-                    request.anyRequest().authenticated();
-                });
-        http.addFilterBefore(customJwtFilter, UsernamePasswordAuthenticationFilter.class);
+//                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests( request -> {
+//                    request.requestMatchers("/login/**").permitAll();
+//                    request.anyRequest().authenticated();
+//                });
+//        http.addFilterBefore(customJwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest()
+                        .permitAll())
+                .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 

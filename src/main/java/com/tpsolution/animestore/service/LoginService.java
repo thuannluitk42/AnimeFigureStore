@@ -6,6 +6,7 @@ import com.tpsolution.animestore.payload.SignUpRequest;
 import com.tpsolution.animestore.repository.RolesRepository;
 import com.tpsolution.animestore.repository.UsersRepository;
 import com.tpsolution.animestore.service.imp.LoginServiceImp;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,38 +25,29 @@ public class LoginService implements LoginServiceImp {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    private String encodePassword(String password) {
-        return passwordEncoder.encode(password);
-    }
-
     @Override
     public boolean checkLogin(String username, String password){
         Users user = usersRepository.findByUsername(username);
         return passwordEncoder.matches(password, user.getPassword());
     }
 
+
     @Override
-    public boolean addUser(SignUpRequest signUpRequest) {
-        Users users = new Users();
-
-        Set<Roles> setRolesRequest = new HashSet<>();
-
-        for (Integer item: signUpRequest.getRoleId()) {
-            Roles roles = rolesRepository.findByRoleId(item);
-            setRolesRequest.add(roles);
-        }
-
-        users.setFullname(signUpRequest.getFullName());
-        users.setUsername(signUpRequest.getEmail());
-        users.setPassword(encodePassword(signUpRequest.getPassword()));
-        users.setDeleted(false);
-        users.setRoles(setRolesRequest);
-        try {
-            usersRepository.save(users);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
+    public String logout(HttpServletRequest request) {
+//        String email = "";
+//        String token = "";
+//        String tokenHeader = request.getHeader(SystemConstant.HeaderConstant.AUTHORIZATION);
+//        if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith(SystemConstant.HeaderConstant.BEARER)) {
+//            token = tokenHeader.substring(7);
+//            email = jwtHelper.getUsernameFromToken(token);
+//            User user = userRepository.findUserByEmailAndIsDelete(email, Boolean.FALSE).orElseThrow(() -> {
+//                throw new NotFoundException(ErrorMessage.ACCOUNT_NOT_FOUND);
+//            });
+//            user.setIsLogin(Boolean.FALSE);
+//            userRepository.save(user);
+//        }
+//        return ErrorCode.SUCCESS.name();
+        return "";
     }
 
 }

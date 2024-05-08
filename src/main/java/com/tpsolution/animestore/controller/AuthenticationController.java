@@ -1,22 +1,20 @@
 package com.tpsolution.animestore.controller;
 
 import com.tpsolution.animestore.payload.ResponseData;
-import com.tpsolution.animestore.payload.SignUpRequest;
 import com.tpsolution.animestore.service.imp.LoginServiceImp;
 import com.tpsolution.animestore.utils.JwtUtilsHelper;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Encoders;
-import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.crypto.SecretKey;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/login")
-public class LoginController {
+@RequestMapping("/auth")
+public class AuthenticationController {
     @Autowired
     LoginServiceImp loginServiceImp;
 
@@ -39,11 +37,10 @@ public class LoginController {
 
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest){
-        ResponseData responseData = new ResponseData();
-        responseData.setData(loginServiceImp.addUser(signUpRequest));
-        return new ResponseEntity<>(responseData, HttpStatus.OK);
+
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        return loginServiceImp.logout(request);
     }
 
 }

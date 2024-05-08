@@ -12,8 +12,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class KeyOrdersDetail implements Serializable {
 
-    @Column(name = "order_id")
+    @Column(name = "order_id", insertable=false, updatable=false)
     private int orderId;
-    @Column(name = "food_id")
+    @Column(name = "food_id", insertable=false, updatable=false)
     private int foodId;
 }
