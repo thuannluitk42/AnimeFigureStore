@@ -7,12 +7,13 @@ CREATE TABLE `users` (
                          `password` varchar(255) NOT NULL,
                          `fullname` nvarchar(255) NULL DEFAULT NULL ,
                          `address` nvarchar(255) null DEFAULT NULL ,
-                         `phonenumber` varchar(12),
-                         `email` varchar(255),
-                         `dob` varchar(10),
+                         `phonenumber` varchar(12) NULL DEFAULT NULL ,
+                         `email` varchar(255) NULL DEFAULT NULL ,
+                         `dob` varchar(10) NULL DEFAULT NULL ,
                          `avatar` text,
-                         `is_deleted` boolean,
+                         `is_deleted` boolean DEFAULT false,
                          `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+                         `token` varchar(255) NULL DEFAULT NULL ,
                          PRIMARY KEY (`user_id`)
 );
 
@@ -26,55 +27,53 @@ CREATE TABLE `roles` (
 );
 
 CREATE TABLE `users_roles` (
-                         `user_id` int(11),
-                         `role_id` int(11),
-                         PRIMARY KEY (`user_id`,`role_id`)
+                               `user_id` int(11),
+                               `role_id` int(11),
+                               PRIMARY KEY (`user_id`,`role_id`)
 );
 
 CREATE TABLE `products` (
-                         `product_id` int(11) NOT NULL AUTO_INCREMENT,
-						 `product_name` nvarchar(255) NOT NULL,
-						 `product_price` decimal NOT NULL,
-                         `product_images` text NULL comment 'danh sach anh',
-                         `product_quantity` int,
-                         `product_description` text,
-						 `discount` text comment 'gia tri giam gia 50%, 50000',
-                         `category_id` int(11) NOT NULL,
-                         `is_deleted` boolean default false,
-                         `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-                          PRIMARY KEY (`product_id`)
+                            `product_id` int(11) NOT NULL AUTO_INCREMENT,
+                            `product_name` nvarchar(255) NOT NULL,
+                            `product_price` decimal NOT NULL,
+                            `product_images` text NULL comment 'danh sach anh',
+                            `product_quantity` int default 0,
+                            `product_description` text default null,
+                            `discount` text comment 'gia tri giam gia 50%, 50000',
+                            `category_id` int(11) NOT NULL,
+                            `is_deleted` boolean default false,
+                            `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`product_id`)
 );
 
 CREATE TABLE `categories` (
-                         `category_id` int(11) NOT NULL AUTO_INCREMENT,
-						 `category_name` nvarchar(255)  NOT NULL,
-                         `is_deleted` boolean default false,
-                         `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-                          PRIMARY KEY (`category_id`)
+                              `category_id` int(11) NOT NULL AUTO_INCREMENT,
+                              `category_name` nvarchar(255)  NOT NULL,
+                              `is_deleted` boolean default false,
+                              `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+                              PRIMARY KEY (`category_id`)
 );
 
 CREATE TABLE `orders` (
-                         `order_id` int(11) NOT NULL AUTO_INCREMENT,
-						 `user_id` int(11),
-                         `total` decimal,
-						 `delivery_address` nvarchar(255) null DEFAULT NULL,
-                         `payment_option` int comment '0: pay offline, 1: pay online',
-                         `payment_status` int comment '0: pending, 1: success, 2: failed',
-                         `vnpay_transaction_id` int comment 'vnp_TxnRef: ma giao dich ben vnpay',
-                         `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-                         PRIMARY KEY (`order_id`)
+                          `order_id` int(11) NOT NULL AUTO_INCREMENT,
+                          `user_id` int(11),
+                          `total` decimal default 0,
+                          `delivery_address` nvarchar(255) null DEFAULT NULL,
+                          `payment_option` int comment '0: pay offline, 1: pay online',
+                          `payment_status` int comment '0: pending, 1: success, 2: failed',
+                          `vnpay_transaction_id` int comment 'vnp_TxnRef: ma giao dich ben vnpay',
+                          `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+                          PRIMARY KEY (`order_id`)
 );
 
 CREATE TABLE `orders_detail` (
-                         `order_id` int(11),
-						 `product_id` int(11),
-						 `unit_price;` decimal comment 'gia luc tinh tien',
-                         `amount` int ,
-                         `sub_total` timestamp DEFAULT CURRENT_TIMESTAMP,
-                         PRIMARY KEY (`order_id`,`product_id`)
+                                 `order_id` int(11),
+                                 `product_id` int(11),
+                                 `unit_price;` decimal comment 'gia luc tinh tien',
+                                 `amount` int ,
+                                 `sub_total` timestamp DEFAULT CURRENT_TIMESTAMP,
+                                 PRIMARY KEY (`order_id`,`product_id`)
 );
-
-
 
 
 INSERT INTO `roles` (`role_name`,`roles_descripion`,`is_deleted`) VALUES ('admin','manage everything','0');
