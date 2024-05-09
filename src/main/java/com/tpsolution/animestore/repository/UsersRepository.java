@@ -2,7 +2,9 @@ package com.tpsolution.animestore.repository;
 
 import com.tpsolution.animestore.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UsersRepository extends PagingAndSortingRepository<Users, UUID>, JpaRepository<Users, UUID> {
+public interface UsersRepository extends CrudRepository<Users, UUID>, JpaSpecificationExecutor<Users> {
 
     List<Users> findUsersByUsernameAndPassword(String username, String password);
     Users findByUsername(String username);
@@ -21,5 +23,7 @@ public interface UsersRepository extends PagingAndSortingRepository<Users, UUID>
 
     @Query("SELECT u from Users u  where (lower(u.token) like lower(:token))")
     Users findByPasswordResetToken(String token);
+
+    Users getUsersByUserId(int userId);
 }
 

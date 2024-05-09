@@ -5,11 +5,9 @@ import com.tpsolution.animestore.entity.Roles;
 import com.tpsolution.animestore.entity.Users;
 import com.tpsolution.animestore.exception.BadRequestException;
 import com.tpsolution.animestore.exception.NotFoundException;
-import com.tpsolution.animestore.payload.AddUserRequest;
-import com.tpsolution.animestore.payload.ChangePWRequest;
-import com.tpsolution.animestore.payload.DataResponse;
-import com.tpsolution.animestore.payload.UpdateUserRequest;
+import com.tpsolution.animestore.payload.*;
 import com.tpsolution.animestore.repository.RolesRepository;
+import com.tpsolution.animestore.repository.UserCriteriaRepository;
 import com.tpsolution.animestore.repository.UsersRepository;
 import com.tpsolution.animestore.service.imp.UserServiceImp;
 import com.tpsolution.animestore.utils.CommonUtils;
@@ -17,16 +15,20 @@ import com.tpsolution.animestore.utils.JwtUtilsHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.tpsolution.animestore.repository.UserCriteriaRepository.withClientSearch;
 
 @Service
 public class UserService implements UserServiceImp {
@@ -44,6 +46,9 @@ public class UserService implements UserServiceImp {
 
     @Autowired
     JwtUtilsHelper jwtTokenHelper;
+
+    @Autowired
+    private UserCriteriaRepository userCriteriaRepository;
 
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
@@ -80,7 +85,7 @@ public class UserService implements UserServiceImp {
                 users.setEmail(request.getEmail());
 
                 // cac gia tri duoc khoi tao mac dinh khi user dc tao lan dau tien
-                users.setFullname(request.getEmail());
+                users.setFullname(CommonUtils.extractUsernameFromEmail(request.getEmail()));
                 users.setAddress("Nha trang, khánh hòa");
                 users.setPhonenumber("0983172229");
                 users.setDob("23/03/1990");
@@ -88,6 +93,9 @@ public class UserService implements UserServiceImp {
 
                 users.setDeleted(false);
                 users.setRoles(setRolesRequest);
+                String token = jwtTokenHelper.generateToken(CommonUtils.extractUsernameFromEmail(request.getEmail()));
+                users.setToken(token);
+
                 usersRepository.save(users);
             } else {
                 throw new BadRequestException(ErrorMessage.USER_IS_EXISTED);
@@ -229,6 +237,7 @@ public class UserService implements UserServiceImp {
         String token = jwtTokenHelper.generateToken(userEntity.getUsername());
         logger.info("#token: {}", token);
         userEntity.setToken(token);
+        userEntity.setPassword(encodePassword("Abc12345@"));
 
         usersRepository.save(userEntity);
 
@@ -251,6 +260,88 @@ public class UserService implements UserServiceImp {
         userEntity.setToken(null);
         usersRepository.save(userEntity);
         return DataResponse.ok(null);
+    }
+
+    @Override
+    public DataResponse getInfoDetailUser(String userId) {
+        logger.info("#getInfoDetailUser: "+userId);
+        Users userEntity = usersRepository.getUsersByUserId(Integer.valueOf(userId));
+
+        if (null == userEntity) {
+            throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+        }
+
+        DataUserResponse userData = new DataUserResponse();
+
+        userData.setUserId(userEntity.getUserId());
+        userData.setFullName(userEntity.getFullname());
+        userData.setAddress(userEntity.getAddress());
+        userData.setPhoneNumber(userEntity.getPhonenumber());
+        userData.setEmail(userEntity.getEmail());
+        userData.setDob(userEntity.getDob());
+        userData.setAvatar(userEntity.getAvatar());
+
+        Set<Roles> roles = userEntity.getRoles();
+        if (!roles.isEmpty()) {
+            Iterator<Roles> iterator = roles.iterator();
+            Roles firstRole = iterator.next();
+            int firstRoleId = firstRole.getRoleId();
+            System.out.println("ID of the first role: " + firstRoleId);
+            userData.setRoleId(firstRoleId);
+        }
+
+        return DataResponse.ok(userData);
+    }
+
+    @Override
+    @Transactional
+    public DataResponse getUserAll(UsersRequest usersRequest) {
+        logger.info("#getUserAll");
+        if (usersRequest == null) {
+            throw new BadRequestException(ErrorMessage.USER_REQUEST_IS_NOT_NULL);
+        }
+        int page = usersRequest.getPage();
+        if (page > 0) {
+            page = page - 1;
+        }
+        Pageable pageableRequest = PageRequest.of(page, usersRequest.getSize(), Sort.by(Sort.Direction.DESC, "createdDate"));
+        UserResponse userResponse = new UserResponse();
+
+        Page<Users> usersPage = userCriteriaRepository.findAll(buildSpecification(usersRequest), pageableRequest);
+        if (!usersPage.hasContent()) {
+            logger.info("Query with empty data");
+            userResponse.setList(Collections.emptyList());
+            return DataResponse.ok(userResponse);
+        }
+        userResponse.setList(usersPage.get().map(this::build).collect(Collectors.toList()));
+        userResponse.setCurrentPage(usersRequest.getPage());
+        userResponse.setTotalPage(usersPage.getTotalPages());
+        userResponse.setTotalElement(usersPage.getTotalElements());
+        return DataResponse.ok(userResponse);
+    }
+
+    public UserDetailResponse build(Users users) {
+        UserDetailResponse userDetailResponse = new UserDetailResponse();
+
+        userDetailResponse.setUserId(UUID.fromString(String.valueOf(users.getUserId())));
+        userDetailResponse.setDob(users.getDob());
+        userDetailResponse.setAddress(users.getAddress());
+        userDetailResponse.setAvatar(users.getAvatar());
+        userDetailResponse.setEmail(users.getEmail());
+        userDetailResponse.setFullName(users.getFullname());
+        userDetailResponse.setPhoneNumber(users.getPhonenumber());
+
+        return userDetailResponse;
+    }
+
+    private Specification<Users> buildSpecification(UsersRequest usersRequest) {
+        Specification<Users> spec = Specification.where(UserCriteriaRepository.withIsDeleted(Boolean.FALSE));
+
+        String search = usersRequest.getSearch();
+        if (StringUtils.hasText(search)) {
+            spec = spec.and(withClientSearch(search));
+        }
+        return spec;
     }
 
 }

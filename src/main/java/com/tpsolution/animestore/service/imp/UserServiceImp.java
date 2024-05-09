@@ -1,9 +1,6 @@
 package com.tpsolution.animestore.service.imp;
 
-import com.tpsolution.animestore.payload.AddUserRequest;
-import com.tpsolution.animestore.payload.ChangePWRequest;
-import com.tpsolution.animestore.payload.DataResponse;
-import com.tpsolution.animestore.payload.UpdateUserRequest;
+import com.tpsolution.animestore.payload.*;
 
 public interface UserServiceImp {
 
@@ -16,4 +13,8 @@ public interface UserServiceImp {
     DataResponse requestResetPW(String email);
 
     DataResponse resetPassword(String token, String password, String confirmPassword);
+
+    DataResponse getInfoDetailUser(String userId);
+
+    DataResponse getUserAll(UsersRequest usersRequest);
 }
