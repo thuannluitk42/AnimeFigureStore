@@ -13,11 +13,9 @@ public class BadRequestException extends RuntimeException {
 
     private String errorCode;
     private String message;
-    private List<String> listMessage;
 
     public BadRequestException(ErrorMessage errorMessage) {
         this.errorCode = errorMessage.getCode();
         this.message = errorMessage.getMessage();
-        listMessage.add(errorMessage.getMessage());
     }
 }

@@ -13,10 +13,20 @@ public class NotFoundException extends RuntimeException {
 
     private String errorCode;
     private String message;
-    private List<String> listMessage;
     public NotFoundException(ErrorMessage errorMessage) {
         this.errorCode = errorMessage.getCode();
         this.message = errorMessage.getMessage();
-        listMessage.add(errorMessage.getMessage());
+    }
+
+    public NotFoundException() {
+        super();
+    }
+
+    public NotFoundException(ErrorMessage errorMessage, Throwable cause) {
+        super(errorMessage.getMessage(), cause);
+    }
+
+    public NotFoundException(Throwable cause) {
+        super(cause);
     }
 }

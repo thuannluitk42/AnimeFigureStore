@@ -62,6 +62,9 @@ public class Users implements Serializable {
     )
     private Set<Roles> roles = new HashSet<>();
 
+    @Column(name = "token", length = 255, nullable = true)
+    private String token;
+
     public void setRoles(Set<Roles> roles) {
         this.roles = roles;
     }
@@ -81,6 +84,12 @@ public class Users implements Serializable {
         }
 
         return false;
+    }
+    @Transient
+    public String getPhotosImagePath() {
+        if (avatar == null) return null;
+
+        return "/user-photos/" + userId + "/" + avatar;
     }
 
 }

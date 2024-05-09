@@ -17,7 +17,9 @@ public interface UsersRepository extends PagingAndSortingRepository<Users, UUID>
     Users findByUsername(String username);
 
     @Query("SELECT u from Users u  where (lower(u.email) like lower(:email)) and u.isDeleted =:isDelete")
-   Users findUsersByEmailAndIsDelete(String email, Boolean isDelete);
+    Users findUsersByEmailAndIsDelete(String email, Boolean isDelete);
 
+    @Query("SELECT u from Users u  where (lower(u.token) like lower(:token))")
+    Users findByPasswordResetToken(String token);
 }
 

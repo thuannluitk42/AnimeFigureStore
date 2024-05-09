@@ -13,5 +13,7 @@ public interface UserServiceImp {
 
     DataResponse changePW(ChangePWRequest request);
 
-    DataResponse resetRequestPW(String email);
+    DataResponse requestResetPW(String email);
+
+    DataResponse resetPassword(String token, String password, String confirmPassword);
 }

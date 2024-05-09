@@ -16,9 +16,12 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+      file-size-threshold: 2KB
 jwt:
   privateKey: s30AjBawg1JBD92Gab5t8UDzl/+WSSug1VmLErKG8JA=
-fileUpload:
-  rootPath: ..\animestore\uploads
+#fileUpload:
+#  rootPath: ..\animestore\uploads
 
 

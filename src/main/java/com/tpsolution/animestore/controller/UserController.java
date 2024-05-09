@@ -1,15 +1,16 @@
 package com.tpsolution.animestore.controller;
 
-
-import com.tpsolution.animestore.payload.AddUserRequest;
-import com.tpsolution.animestore.payload.ChangePWRequest;
-import com.tpsolution.animestore.payload.DataResponse;
-import com.tpsolution.animestore.payload.UpdateUserRequest;
+import com.tpsolution.animestore.payload.*;
 import com.tpsolution.animestore.service.UserService;
+import com.tpsolution.animestore.utils.FileUploadUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/admin/user")
@@ -23,18 +24,25 @@ public class UserController {
     }
 
     @PostMapping("/add-new-user")
+
     public ResponseEntity<DataResponse> insertNewUser(@RequestBody AddUserRequest request) {
         return ResponseEntity.ok(userService.insertNewUser(request));
     }
 
-    @PostMapping("/update-info-user")
-    public ResponseEntity<DataResponse> updateInfoUser(@RequestBody UpdateUserRequest request, @RequestParam("avatar") MultipartFile multipartFile) {
+    @PostMapping(value = "/update-info-user", consumes = { "multipart/form-data" })
+    public ResponseEntity<DataResponse> updateInfoUser(@RequestPart("data") UpdateUserRequest request,
+                                                       @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
 
         if (!multipartFile.isEmpty()) {
+
+            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            request.setUrlImage(fileName);
+            String uploadDir = "user-photos/" + request.getUserId();
+            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+
             return ResponseEntity.ok(userService.updateUser(request));
         } else {
-            request.setImageName(null);
-            request.setUrlImage(null);
+
             return ResponseEntity.ok(userService.updateUser(request));
         }
     }
@@ -45,13 +53,14 @@ public class UserController {
     }
 
     @PostMapping("/request-reset-password/{email}")
-    public ResponseEntity<DataResponse> resetRequestPW(@PathVariable String email) {
-        return ResponseEntity.ok(userService.resetRequestPW(email));
+    public ResponseEntity<DataResponse> requestResetPW(@PathVariable String email) {
+        return ResponseEntity.ok(userService.requestResetPW(email));
     }
 
-//    @PostMapping("/reset-password")
-//    public ResponseEntity<DataResponse> resetPassword(@RequestBody ResetPWRequest resetPW) {
-//        return ResponseEntity.ok().body(userService.resetPassword(userResetPassword.getToken(), userResetPassword.getPassword(), userResetPassword.getConfirmPassword()));
-//    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<DataResponse> resetPassword(@RequestBody ResetPasswordRequest userResetPassword) {
+        return ResponseEntity.ok().body(userService.resetPassword(userResetPassword.getToken(), userResetPassword.getPassword(), userResetPassword.getConfirmPassword()));
+    }
+
 
 }

@@ -13,6 +13,7 @@ import com.tpsolution.animestore.repository.RolesRepository;
 import com.tpsolution.animestore.repository.UsersRepository;
 import com.tpsolution.animestore.service.imp.UserServiceImp;
 import com.tpsolution.animestore.utils.CommonUtils;
+import com.tpsolution.animestore.utils.JwtUtilsHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class UserService implements UserServiceImp {
     @Autowired
     RolesRepository rolesRepository;
 
+    @Autowired
+    JwtUtilsHelper jwtTokenHelper;
+
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
     }
@@ -64,14 +68,24 @@ public class UserService implements UserServiceImp {
 
             if (users == null) {
 
+                users = new Users();
+
                 for (Integer item: request.getRoleId()) {
                     Roles roles = rolesRepository.findByRoleId(item);
                     setRolesRequest.add(roles);
                 }
 
-                users = new Users();
-                users.setUsername(request.getEmail());
+                users.setUsername(CommonUtils.extractUsernameFromEmail(request.getEmail()));
                 users.setPassword(encodePassword(request.getPassword()));
+                users.setEmail(request.getEmail());
+
+                // cac gia tri duoc khoi tao mac dinh khi user dc tao lan dau tien
+                users.setFullname(request.getEmail());
+                users.setAddress("Nha trang, khánh hòa");
+                users.setPhonenumber("0983172229");
+                users.setDob("23/03/1990");
+                users.setAvatar("");
+
                 users.setDeleted(false);
                 users.setRoles(setRolesRequest);
                 usersRepository.save(users);
@@ -150,7 +164,7 @@ public class UserService implements UserServiceImp {
                     users.setPassword(users.getPassword());
                 }
 
-                if (StringUtils.hasText(request.getImageName()) && StringUtils.hasText(request.getUrlImage())) {
+                if (StringUtils.hasText(request.getUrlImage())) {
                     users.setAvatar(request.getUrlImage());
                 } else {
                     users.setAvatar(users.getAvatar());
@@ -163,7 +177,6 @@ public class UserService implements UserServiceImp {
 
             }
 
-
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -175,7 +188,6 @@ public class UserService implements UserServiceImp {
     @Transactional
     public DataResponse changePW(ChangePWRequest request) {
         logger.info("#changePW email: {}", request.getEmail());
-        try {
             if (StringUtils.hasText(request.getEmail()) == true && !CommonUtils.checkEmail(request.getEmail())) {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
@@ -202,40 +214,42 @@ public class UserService implements UserServiceImp {
                 usersRepository.save(users);
             }
 
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
         return DataResponse.ok(null);
-
     }
 
     @Override
-    public DataResponse resetRequestPW(String email) {
+    public DataResponse requestResetPW(String email) {
         logger.info("#resetRequestPW email: {}", email);
-        Users u = usersRepository.findUsersByEmailAndIsDelete(email, Boolean.FALSE);
+        Users userEntity = usersRepository.findUsersByEmailAndIsDelete(email, Boolean.FALSE);
 
-        if (null == u) {
+        if (null == userEntity) {
             throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
         }
 
-//        String token = jwtTokenHelper.generateJwtTokenWithMail(String.valueOf(System.currentTimeMillis()));
-//        logger.info("#token: {}", token);
-//        userEntity.setToken(token);
-//
-//        userRepository.save(userEntity);
-//
-//        String fullName = userEntity.getFullName();
-//        String link = configService.getUrlForgot() + token;
-//        String mailTemplate = commonUtilService.getTemplateEmailResetPassword(fullName, link, userEntity.getChannel());
-//
-//        try {
-//            emailSender.sendEmail(userEntity.getEmail(), userEntity.getChannel().name(), SystemConstant.EContractResource.USER_RESET_PW_TITLE, mailTemplate);
-//        } catch (Exception e) {
-//            logger.error(e.getMessage());
-//            throw new BadRequestException(ErrorMessage.EMAIL_DOES_NOT_WORK);
-//        }
+        String token = jwtTokenHelper.generateToken(userEntity.getUsername());
+        logger.info("#token: {}", token);
+        userEntity.setToken(token);
+
+        usersRepository.save(userEntity);
+
+        return DataResponse.ok(null);
+    }
+
+    @Override
+    public DataResponse resetPassword(String token, String password, String confirmPassword) {
+        logger.info("#resetPassword");
+        Users userEntity = usersRepository.findByPasswordResetToken(token);
+        if (userEntity == null) {
+            throw new NotFoundException(ErrorMessage.TOKEN_NOT_FOUND);
+        }
+
+        if (!password.equals(confirmPassword)) {
+            throw new NotFoundException(ErrorMessage.COMPARE_PASSWORD_ERROR);
+        }
+
+        userEntity.setPassword(passwordEncoder.encode(password));
+        userEntity.setToken(null);
+        usersRepository.save(userEntity);
         return DataResponse.ok(null);
     }
 

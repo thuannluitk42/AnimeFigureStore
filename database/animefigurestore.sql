@@ -9,7 +9,7 @@ CREATE TABLE `users` (
                          `address` nvarchar(255) null DEFAULT NULL ,
                          `phonenumber` varchar(12),
                          `email` varchar(255),
-                         `dob` varchar(8),
+                         `dob` varchar(10),
                          `avatar` text,
                          `is_deleted` boolean,
                          `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,

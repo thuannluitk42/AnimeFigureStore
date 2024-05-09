@@ -21,6 +21,7 @@ public class UpdateUserRequest {
     private String password;
     @NotEmpty()
     private Set<Integer> roleId;
-    private String imageName;
+    @NotEmpty()
+    private long userId;
     private String urlImage;
 }
