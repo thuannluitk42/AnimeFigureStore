@@ -59,7 +59,7 @@ public class CategoryService implements CategoryServiceImp {
                 throw new BadRequestException(ErrorMessage.CATEGORY_NAME_IS_INVALID);
             }
 
-            category = categoryRepository.findCategoriesByCategoryIdAndIsDelete(Integer.valueOf(request.getCategoryId()), Boolean.FALSE);
+            category = categoryRepository.findCategoryByCategoryIdAndDeleted(Integer.valueOf(request.getCategoryId()), Boolean.FALSE);
 
             if (category == null) {
                 throw new NotFoundException(ErrorMessage.CATEGORY_NOT_FOUND);
@@ -88,7 +88,7 @@ public class CategoryService implements CategoryServiceImp {
     @Transactional
     public DataResponse getInfoDetailCategory(String categoryId) {
         logger.info("#getInfoDetailCategory: "+categoryId);
-        Category category = categoryRepository.findCategoriesByCategoryIdAndIsDelete(Integer.valueOf(categoryId),Boolean.FALSE);
+        Category category = categoryRepository.findCategoryByCategoryIdAndDeleted(Integer.valueOf(categoryId),Boolean.FALSE);
 
         if (category == null) {
             throw new NotFoundException(ErrorMessage.CATEGORY_NOT_FOUND);

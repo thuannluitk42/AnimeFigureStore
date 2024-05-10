@@ -15,5 +15,6 @@ public interface CategoryRepository extends CrudRepository<Category, UUID>, JpaS
     @Query("SELECT u from Category u  where (lower(u.categoryName) like lower(:categoryName)) and u.isDeleted =:isDelete")
     List<Category> findCategoriesByCategoryNameAndIsDelete(String categoryName, Boolean isDelete);
 
-    Category findCategoriesByCategoryIdAndIsDelete(int categoryId, Boolean isDelete);
+    @Query("SELECT u from Category u  where u.categoryId =:categoryId and u.isDeleted =:isDelete")
+    Category findCategoryByCategoryIdAndDeleted(int categoryId, Boolean isDelete);
 }

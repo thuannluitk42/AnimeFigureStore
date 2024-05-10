@@ -93,7 +93,7 @@ public class ProductService implements ProductServiceImp {
                 product.setDiscount("");
             }
 
-            Category category = categoryRepository.findCategoriesByCategoryIdAndIsDelete(request.getCategory_id(),Boolean.FALSE);
+            Category category = categoryRepository.findCategoryByCategoryIdAndDeleted(request.getCategory_id(),Boolean.FALSE);
 
             if (null == category) {
                 throw new BadRequestException(ErrorMessage.CATEGORY_IS_NOT_EXIST);
@@ -155,7 +155,7 @@ public class ProductService implements ProductServiceImp {
                     product.setDiscount(request.getProduct_description());
                 }
 
-                Category category = categoryRepository.findCategoriesByCategoryIdAndIsDelete(request.getCategory_id(),Boolean.FALSE);
+                Category category = categoryRepository.findCategoryByCategoryIdAndDeleted(request.getCategory_id(),Boolean.FALSE);
 
                 if (null != category) {
                     product.setCategory(category);
