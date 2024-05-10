@@ -1,10 +1,13 @@
 package com.tpsolution.animestore.controller;
 
+import com.tpsolution.animestore.payload.AddOrderRequest;
+import com.tpsolution.animestore.payload.DataResponse;
+import com.tpsolution.animestore.payload.SearchRequest;
+import com.tpsolution.animestore.payload.UpdateOrderRequest;
 import com.tpsolution.animestore.service.OrderService;
-import com.tpsolution.animestore.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/order")
@@ -12,4 +15,23 @@ public class OrderController {
 
     @Autowired
     OrderService orderService;
+
+    @GetMapping("/get-info-order/{orderId}")
+    public ResponseEntity<DataResponse> getInfoDetailOrder(@PathVariable String orderIdId) {
+        return ResponseEntity.ok().body(orderService.getInfoDetailOrder(orderIdId));
+    }
+
+    @PostMapping(value ="/add-new-order")
+    public ResponseEntity<DataResponse> insertNewOrder(@RequestBody AddOrderRequest request) {
+        return ResponseEntity.ok(orderService.insertNewOrder(request));
+    }
+
+    @PostMapping(value = "/update-info-order")
+    public ResponseEntity<DataResponse> updateInfoOrder(@RequestBody UpdateOrderRequest request) {
+        return ResponseEntity.ok(orderService.updateOrder(request));
+    }
+    @GetMapping("/paging")
+    public ResponseEntity<DataResponse> getOrderAll(SearchRequest searchRequest) {
+        return ResponseEntity.ok(orderService.getOrderAll(searchRequest));
+    }
 }
