@@ -8,7 +8,7 @@ public interface ProductServiceImp {
 
     DataResponse updateProduct(UpdateProductRequest request);
 
-    DataResponse getInfoDetailProduct(String userId);
+    DataResponse getInfoDetailProduct(String productId);
 
     DataResponse getProductAll(SearchRequest searchRequest);
 }

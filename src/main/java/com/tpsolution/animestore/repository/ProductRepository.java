@@ -1,8 +1,6 @@
 package com.tpsolution.animestore.repository;
 
-import com.tpsolution.animestore.entity.Category;
 import com.tpsolution.animestore.entity.Product;
-import com.tpsolution.animestore.entity.Users;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
