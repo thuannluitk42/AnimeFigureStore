@@ -9,43 +9,18 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.tpsolution.animestore.utils.CommonUtils.randomIdentifier;
 
 @RestController
 @RequestMapping("/admin/user")
 public class UserController {
 
-    // class variable
-    final String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890";
-
-    final java.util.Random rand = new java.util.Random();
-    // consider using a Map<String,Boolean> to say whether the identifier is being used or not
-    final Set<String> identifiers = new HashSet<String>();
-
-    public String randomIdentifier() {
-        StringBuilder builder = new StringBuilder();
-        while(builder.toString().length() == 0) {
-            int length = rand.nextInt(5)+5;
-            for(int i = 0; i < length; i++) {
-                builder.append(lexicon.charAt(rand.nextInt(lexicon.length())));
-            }
-            if(identifiers.contains(builder.toString())) {
-                builder = new StringBuilder();
-            }
-        }
-        return builder.toString();
-    }
-
     @Autowired
     UserService userService;
-
-    @GetMapping("/test-request")
-    public ResponseEntity<String> testPostRequest() {
-        return ResponseEntity.ok("GET request successful");
-    }
 
     /*Xem chi tiet thong tin 1 user*/
     @GetMapping("/get-info-user/{userId}")
@@ -99,7 +74,7 @@ public class UserController {
     }
 
     @GetMapping("/paging")
-    public ResponseEntity<DataResponse> getContractAll(UsersRequest usersRequest) {
-        return ResponseEntity.ok(userService.getUserAll(usersRequest));
+    public ResponseEntity<DataResponse> getUserAll(SearchRequest searchRequest) {
+        return ResponseEntity.ok(userService.getUserAll(searchRequest));
     }
 }

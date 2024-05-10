@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @Repository
 public interface UsersRepository extends CrudRepository<Users, UUID>, JpaSpecificationExecutor<Users> {
-
     List<Users> findUsersByUsernameAndPassword(String username, String password);
     Users findByUsername(String username);
 

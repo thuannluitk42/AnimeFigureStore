@@ -1,5 +1,9 @@
 package com.tpsolution.animestore.utils;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,5 +38,59 @@ public class CommonUtils {
         } else {
             return "Invalid email format";
         }
+    }
+
+    public static String randomIdentifier() {
+        Set<String> identifiers = new HashSet<String>();
+        String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890";
+        Random rand = new java.util.Random();
+
+        StringBuilder builder = new StringBuilder();
+        while(builder.toString().length() == 0) {
+            int length = rand.nextInt(5)+5;
+            for(int i = 0; i < length; i++) {
+                builder.append(lexicon.charAt(rand.nextInt(lexicon.length())));
+            }
+            if(identifiers.contains(builder.toString())) {
+                builder = new StringBuilder();
+            }
+        }
+        return builder.toString();
+    }
+
+    public static boolean containsSpecialCharacter(String str) {
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    public static boolean isImageFile(String fileName) {
+        if (fileName == null)
+            return false;
+
+        String extension = getFileExtension(fileName);
+
+        if (extension != null) {
+            String[] imageExtensions = {"jpg", "jpeg", "png", "gif", "bmp"};
+            for (String ext : imageExtensions) {
+                if (extension.equalsIgnoreCase(ext)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static String getFileExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
+            return fileName.substring(lastDotIndex + 1).toLowerCase();
+        }
+        return null;
+    }
+
+    public static boolean isNumeric(String str) {
+        // Using regular expression to check if the string contains only numeric characters
+        return str.matches("-?\\d+(\\.\\d+)?"); // Matches integers or decimals
     }
 }

@@ -21,6 +21,6 @@ public interface UserCriteriaRepository extends JpaSpecificationExecutor<Users>,
     }
 
     static Specification<Users> withCreatedDate(String createdDate) {
-        return (user, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(user.get("createdDate")), createdDate);
+        return (user, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(user.get("is_deleted")), createdDate);
     }
 }

@@ -16,5 +16,5 @@ public interface UserServiceImp {
 
     DataResponse getInfoDetailUser(String userId);
 
-    DataResponse getUserAll(UsersRequest usersRequest);
+    DataResponse getUserAll(SearchRequest searchRequest);
 }

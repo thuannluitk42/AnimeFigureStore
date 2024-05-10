@@ -36,16 +36,16 @@ public class UserService implements UserServiceImp {
     private static final Logger logger = LogManager.getLogger(UserService.class);
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    UsersRepository usersRepository;
+    private UsersRepository usersRepository;
 
     @Autowired
-    RolesRepository rolesRepository;
+    private RolesRepository rolesRepository;
 
     @Autowired
-    JwtUtilsHelper jwtTokenHelper;
+    private JwtUtilsHelper jwtTokenHelper;
 
     @Autowired
     private UserCriteriaRepository userCriteriaRepository;
@@ -286,7 +286,6 @@ public class UserService implements UserServiceImp {
             Iterator<Roles> iterator = roles.iterator();
             Roles firstRole = iterator.next();
             int firstRoleId = firstRole.getRoleId();
-            System.out.println("ID of the first role: " + firstRoleId);
             userData.setRoleId(firstRoleId);
         }
 
@@ -295,26 +294,26 @@ public class UserService implements UserServiceImp {
 
     @Override
     @Transactional
-    public DataResponse getUserAll(UsersRequest usersRequest) {
+    public DataResponse getUserAll(SearchRequest searchRequest) {
         logger.info("#getUserAll");
-        if (usersRequest == null) {
-            throw new BadRequestException(ErrorMessage.USER_REQUEST_IS_NOT_NULL);
+        if (searchRequest == null) {
+            throw new BadRequestException(ErrorMessage.SEARCH_REQUEST_IS_NOT_NULL);
         }
-        int page = usersRequest.getPage();
+        int page = searchRequest.getPage();
         if (page > 0) {
             page = page - 1;
         }
-        Pageable pageableRequest = PageRequest.of(page, usersRequest.getSize(), Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pageableRequest = PageRequest.of(page, searchRequest.getSize(), Sort.by(Sort.Direction.DESC, "createdDate"));
         UserResponse userResponse = new UserResponse();
 
-        Page<Users> usersPage = userCriteriaRepository.findAll(buildSpecification(usersRequest), pageableRequest);
+        Page<Users> usersPage = userCriteriaRepository.findAll(buildSpecification(searchRequest), pageableRequest);
         if (!usersPage.hasContent()) {
             logger.info("Query with empty data");
             userResponse.setList(Collections.emptyList());
             return DataResponse.ok(userResponse);
         }
         userResponse.setList(usersPage.get().map(this::build).collect(Collectors.toList()));
-        userResponse.setCurrentPage(usersRequest.getPage());
+        userResponse.setCurrentPage(searchRequest.getPage());
         userResponse.setTotalPage(usersPage.getTotalPages());
         userResponse.setTotalElement(usersPage.getTotalElements());
         return DataResponse.ok(userResponse);
@@ -334,10 +333,10 @@ public class UserService implements UserServiceImp {
         return userDetailResponse;
     }
 
-    private Specification<Users> buildSpecification(UsersRequest usersRequest) {
+    private Specification<Users> buildSpecification(SearchRequest searchRequest) {
         Specification<Users> spec = Specification.where(UserCriteriaRepository.withIsDeleted(Boolean.FALSE));
 
-        String search = usersRequest.getSearch();
+        String search = searchRequest.getSearch();
         if (StringUtils.hasText(search)) {
             spec = spec.and(withClientSearch(search));
         }
