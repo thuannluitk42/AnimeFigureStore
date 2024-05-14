@@ -62,12 +62,12 @@ public class ProductController {
             return ResponseEntity.ok(productService.updateProduct(request));
         }
     }
-    @GetMapping("/searchProduct")
+    @GetMapping("/search-product")
     public ResponseEntity<DataResponse> getProductAll(@RequestBody SearchRequest searchRequest) {
         return ResponseEntity.ok(productService.getProductAll(searchRequest));
     }
 
-    @GetMapping("/findAllProduct")
+    @GetMapping("/find-all-product")
     public ResponseEntity<DataResponse> findAllProduct() {
         return ResponseEntity.ok(productService.findAllProduct());
     }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserCriteriaRepository extends JpaSpecificationExecutor<Users>, JpaRepository<Users, Long> {
     static Specification<Users> withIsDeleted(Boolean isDeleted) {
-        return (user, query, criteriaBuilder) -> criteriaBuilder.equal(user.get("isDelete"), isDeleted);
+        return (user, query, criteriaBuilder) -> criteriaBuilder.equal(user.get("isDeleted"), isDeleted);
     }
 
     static Specification<Users> withClientSearch(String search) {
@@ -21,6 +21,6 @@ public interface UserCriteriaRepository extends JpaSpecificationExecutor<Users>,
     }
 
     static Specification<Users> withCreatedDate(String createdDate) {
-        return (user, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(user.get("is_deleted")), createdDate);
+        return (user, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(user.get("createdDate")), createdDate);
     }
 }

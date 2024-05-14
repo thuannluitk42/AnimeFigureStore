@@ -30,8 +30,8 @@ public class OrderController {
     public ResponseEntity<DataResponse> updateInfoOrder(@RequestBody UpdateOrderRequest request) {
         return ResponseEntity.ok(orderService.updateOrder(request));
     }
-    @GetMapping("/paging")
-    public ResponseEntity<DataResponse> getOrderAll(SearchRequest searchRequest) {
+    @GetMapping("/search-order")
+    public ResponseEntity<DataResponse> getOrderAll(@RequestBody SearchRequest searchRequest) {
         return ResponseEntity.ok(orderService.getOrderAll(searchRequest));
     }
 

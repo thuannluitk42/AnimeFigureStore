@@ -319,10 +319,29 @@ public class UserService implements UserServiceImp {
         return DataResponse.ok(userResponse);
     }
 
+    @Override
+    public DataResponse findAllUser() {
+        List<UserDetailResponse> list = new ArrayList<>();
+        for (Users u: usersRepository.findAll()) {
+            UserDetailResponse us = new UserDetailResponse();
+            us.setUserId(u.getUserId());
+            us.setDob(u.getDob());
+            us.setAvatar(u.getPhotosImagePath());
+            us.setAddress(u.getAddress());
+            us.setEmail(u.getEmail());
+            us.setFullName(u.getFullname());
+            us.setPhoneNumber(u.getPhonenumber());
+
+            list.add(us);
+        }
+
+        return DataResponse.ok(list);
+    }
+
     public UserDetailResponse build(Users users) {
         UserDetailResponse userDetailResponse = new UserDetailResponse();
 
-        userDetailResponse.setUserId(UUID.fromString(String.valueOf(users.getUserId())));
+        userDetailResponse.setUserId(users.getUserId());
         userDetailResponse.setDob(users.getDob());
         userDetailResponse.setAddress(users.getAddress());
         userDetailResponse.setAvatar(users.getAvatar());

@@ -23,6 +23,6 @@ public interface ProductCriteriaRepository extends JpaSpecificationExecutor<Prod
     }
 
     static Specification<Product> withCreatedDate(String createdDate) {
-        return (product, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(product.get("created_date")), createdDate);
+        return (product, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(product.get("createdDate")), createdDate);
     }
 }

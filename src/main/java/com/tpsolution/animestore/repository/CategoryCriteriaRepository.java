@@ -9,13 +9,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryCriteriaRepository extends JpaSpecificationExecutor<Category>, JpaRepository<Category, Long> {
     static Specification<Category> withIsDeleted(Boolean isDeleted) {
-        return (category, query, criteriaBuilder) -> criteriaBuilder.equal(category.get("is_deleted"), isDeleted);
+        return (category, query, criteriaBuilder) -> criteriaBuilder.equal(category.get("isDeleted"), isDeleted);
     }
 
     static Specification<Category> withCategoryNameSearch(String search) {
         final String lSearch = "%" + search.toLowerCase() + "%";
         return (category, query, criteriaBuilder)
                 -> criteriaBuilder.or(
-                criteriaBuilder.like(criteriaBuilder.lower(category.get("category_name")), lSearch));
+                criteriaBuilder.like(criteriaBuilder.lower(category.get("categoryName")), lSearch));
     }
 }

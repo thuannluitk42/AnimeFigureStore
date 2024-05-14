@@ -34,8 +34,13 @@ public class CategoryController {
 
     }
 
-    @GetMapping("/paging")
-    public ResponseEntity<DataResponse> getCategoryAll(SearchRequest searchRequest) {
+    @GetMapping("/search-category")
+    public ResponseEntity<DataResponse> getCategoryAll(@RequestBody SearchRequest searchRequest) {
         return ResponseEntity.ok(categoryService.getCategoryAll(searchRequest));
+    }
+
+    @GetMapping("/findAllCategory")
+    public ResponseEntity<DataResponse> getCategoryAll() {
+        return ResponseEntity.ok(categoryService.findAllCategory());
     }
 }

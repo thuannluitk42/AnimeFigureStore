@@ -69,8 +69,13 @@ public class UserController {
         return ResponseEntity.ok(userService.changePW(request));
     }
 
-    @GetMapping("/paging")
-    public ResponseEntity<DataResponse> getUserAll(SearchRequest searchRequest) {
+    @GetMapping("/search-user")
+    public ResponseEntity<DataResponse> getUserAll(@RequestBody SearchRequest searchRequest) {
         return ResponseEntity.ok(userService.getUserAll(searchRequest));
+    }
+
+    @GetMapping("/find-all-user")
+    public ResponseEntity<DataResponse> findAllUser() {
+        return ResponseEntity.ok(userService.findAllUser());
     }
 }

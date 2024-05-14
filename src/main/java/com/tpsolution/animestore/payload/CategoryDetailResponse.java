@@ -6,6 +6,6 @@ import java.util.UUID;
 
 @Data
 public class CategoryDetailResponse {
-    private UUID categoryId;
+    private int categoryId;
     private String categoryName;
 }

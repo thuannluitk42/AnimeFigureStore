@@ -17,4 +17,6 @@ public interface UserServiceImp {
     DataResponse getInfoDetailUser(String userId);
 
     DataResponse getUserAll(SearchRequest searchRequest);
+
+    DataResponse findAllUser();
 }

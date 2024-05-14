@@ -195,7 +195,7 @@ public class ProductService implements ProductServiceImp {
         productData.setProduct_quantity(product.getProductQuantity());
         productData.setProduct_discount(product.getDiscount());
         productData.setProduct_description(product.getProductDescription());
-        productData.setImages(product.getProductImages());
+        productData.setImages(product.getPhotosImagePath());
         productData.setCategory_id(product.getCategory().getCategoryId());
 
         return DataResponse.ok(productData);
@@ -240,7 +240,7 @@ public class ProductService implements ProductServiceImp {
             productDetailResponse.setProduct_price(p.getProductPrice());
             productDetailResponse.setProduct_name(p.getProductName());
             productDetailResponse.setProduct_description(p.getProductDescription());
-            productDetailResponse.setImages(p.getProductImages());
+            productDetailResponse.setImages(p.getPhotosImagePath());
             productDetailResponse.setCategory_id(p.getCategory().getCategoryId());
 
             list.add(productDetailResponse);
@@ -270,7 +270,7 @@ public class ProductService implements ProductServiceImp {
         productDetailResponse.setProduct_price(product.getProductPrice());
         productDetailResponse.setProduct_quantity(product.getProductQuantity());
         productDetailResponse.setProduct_description(product.getProductDescription());
-        productDetailResponse.setImages(product.getProductImages());
+        productDetailResponse.setImages(product.getPhotosImagePath());
         productDetailResponse.setCategory_id(product.getCategory().getCategoryId());
         productDetailResponse.setProduct_discount(product.getDiscount());
 

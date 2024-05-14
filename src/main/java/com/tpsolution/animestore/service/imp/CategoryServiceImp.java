@@ -11,4 +11,6 @@ public interface CategoryServiceImp {
     DataResponse getInfoDetailCategory(String categoryId);
 
     DataResponse getCategoryAll(SearchRequest searchRequest);
+
+    DataResponse findAllCategory();
 }

@@ -52,4 +52,11 @@ public class Product implements Serializable {
 
 //    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private Set<OrderDetail> orderDetails = new HashSet<>();
+
+    @Transient
+    public String getPhotosImagePath() {
+        if (productImages == null ) return null;
+
+        return "/product-photos/" + productImages;
+    }
 }

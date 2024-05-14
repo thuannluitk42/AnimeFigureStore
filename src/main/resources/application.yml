@@ -36,5 +36,7 @@ jwt:
   privateKey: s30AjBawg1JBD92Gab5t8UDzl/+WSSug1VmLErKG8JA=
 #fileUpload:
 #  rootPath: ..\animestore\uploads
+mvc:
+  static-path: /images
 
 

@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tpsolution.animestore.repository.CategoryCriteriaRepository.withCategoryNameSearch;
@@ -44,6 +43,9 @@ public class CategoryService implements CategoryServiceImp {
         category.setCategoryName(request.getCategoryName());
         category.setDeleted(false);
 
+        Date date = new Date();
+        category.setCreatedDate(date);
+
         category = categoryRepository.save(category);
 
         return DataResponse.ok(category);
@@ -53,32 +55,34 @@ public class CategoryService implements CategoryServiceImp {
     @Transactional
     public DataResponse updateCategory(UpdateCategoryRequest request) {
         logger.info("#updateCategory categoryName: {}", request.getCategoryName());
-        Category category = new Category();
-        try {
-            if (StringUtils.hasText(request.getCategoryName()) == false) {
-                throw new BadRequestException(ErrorMessage.CATEGORY_NAME_IS_INVALID);
-            }
 
-            category = categoryRepository.findCategoryByCategoryIdAndDeleted(Integer.valueOf(request.getCategoryId()), Boolean.FALSE);
+        if (StringUtils.hasText(request.getCategoryName()) == false) {
+            throw new BadRequestException(ErrorMessage.CATEGORY_NAME_IS_INVALID);
+        }
 
-            if (category == null) {
-                throw new NotFoundException(ErrorMessage.CATEGORY_NOT_FOUND);
+        if (StringUtils.hasText(request.getCategoryId()) == false) {
+            throw new BadRequestException(ErrorMessage.CATEGORY_ID_IS_INVALID);
+        }
+
+         Category category = categoryRepository.findCategoryByCategoryIdAndDeleted(Integer.valueOf(request.getCategoryId()), Boolean.FALSE);
+
+        if (category == null) {
+            throw new NotFoundException(ErrorMessage.CATEGORY_NOT_FOUND);
+        } else {
+
+            if (StringUtils.hasText(request.getCategoryName())) {
+                category.setCategoryName(request.getCategoryName());
             } else {
-
-                if (StringUtils.hasText(request.getCategoryName())) {
-                    category.setCategoryName(request.getCategoryName());
-                } else {
-                    category.setCategoryName(request.getCategoryName());
-                }
-
-                category.setDeleted(false);
-
-                category = categoryRepository.save(category);
-
+                category.setCategoryName(request.getCategoryName());
             }
 
-        }catch (Exception e){
-            e.printStackTrace();
+            category.setDeleted(false);
+
+            Date date = new Date();
+            category.setCreatedDate(date);
+
+            category = categoryRepository.save(category);
+
         }
 
         return DataResponse.ok(category);
@@ -128,6 +132,20 @@ public class CategoryService implements CategoryServiceImp {
         return DataResponse.ok(categoryResponse);
     }
 
+    @Override
+    public DataResponse findAllCategory() {
+        List<CategoryDetailResponse> list = new ArrayList<>();
+        for (Category category :categoryRepository.findAll()) {
+            CategoryDetailResponse categoryDetailResponse = new CategoryDetailResponse();
+            categoryDetailResponse.setCategoryId(category.getCategoryId());
+            categoryDetailResponse.setCategoryName(category.getCategoryName());
+
+            list.add(categoryDetailResponse);
+        }
+
+        return DataResponse.ok(list);
+    }
+
     private Specification<Category> buildSpecification(SearchRequest searchRequest) {
         Specification<Category> spec = Specification.where(CategoryCriteriaRepository.withIsDeleted(Boolean.FALSE));
 
@@ -141,7 +159,7 @@ public class CategoryService implements CategoryServiceImp {
     public CategoryDetailResponse build(Category category) {
         CategoryDetailResponse categoryDetailResponse = new CategoryDetailResponse();
 
-        categoryDetailResponse.setCategoryId(UUID.fromString(String.valueOf(category.getCategoryId())));
+        categoryDetailResponse.setCategoryId(category.getCategoryId());
         categoryDetailResponse.setCategoryName(category.getCategoryName());
 
         return categoryDetailResponse;

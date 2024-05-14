@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Data
 public class UserDetailResponse {
-    private UUID userId;
+    private int userId;
     private String fullName;
     private String address;
     private String phoneNumber;
