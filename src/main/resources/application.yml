@@ -38,5 +38,7 @@ jwt:
 #  rootPath: ..\animestore\uploads
 mvc:
   static-path: /images
+firebase:
+  image-url: https://storage.googleapis.com/storemanagement-62866.appspot.com/animefigurestore/%s
 
 

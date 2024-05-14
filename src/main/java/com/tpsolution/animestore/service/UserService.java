@@ -58,9 +58,8 @@ public class UserService implements UserServiceImp {
     @Transactional
     public DataResponse insertNewUser(AddUserRequest request) {
         logger.info("#insertNewUser email: {}", request.getEmail());
-        Users users;
+
         Set<Roles> setRolesRequest = new HashSet<>();
-        try {
             if (StringUtils.hasText(request.getEmail()) == true && !CommonUtils.checkEmail(request.getEmail())) {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
@@ -69,7 +68,7 @@ public class UserService implements UserServiceImp {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
 
-            users = usersRepository.findUsersByEmailAndIsDelete(request.getEmail(), Boolean.FALSE);
+        Users users = usersRepository.findUsersByEmailAndIsDelete(request.getEmail(), Boolean.FALSE);
 
             if (users == null) {
 
@@ -96,16 +95,16 @@ public class UserService implements UserServiceImp {
                 String token = jwtTokenHelper.generateToken(CommonUtils.extractUsernameFromEmail(request.getEmail()));
                 users.setToken(token);
 
-                usersRepository.save(users);
+                Date date = new Date();
+                users.setCreatedDate(date);
+
+                users = usersRepository.save(users);
             } else {
                 throw new BadRequestException(ErrorMessage.USER_IS_EXISTED);
             }
 
-        } catch (Exception e){
-            e.printStackTrace();
-        }
 
-        return DataResponse.ok(null);
+        return DataResponse.ok(users);
     }
 
     @Override
@@ -114,7 +113,6 @@ public class UserService implements UserServiceImp {
         logger.info("#updateUser email: {}", request.getEmail());
         Users users;
         Set<Roles> setRolesRequest = new HashSet<>();
-        try {
             if (StringUtils.hasText(request.getEmail()) == true && !CommonUtils.checkEmail(request.getEmail())) {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
@@ -181,15 +179,15 @@ public class UserService implements UserServiceImp {
                 users.setDeleted(false);
                 users.setRoles(setRolesRequest);
 
-                usersRepository.save(users);
+                Date date = new Date();
+                users.setCreatedDate(date);
+
+                users = usersRepository.save(users);
 
             }
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
 
-        return DataResponse.ok(null);
+        return DataResponse.ok(users);
     }
 
     @Override
@@ -279,7 +277,7 @@ public class UserService implements UserServiceImp {
         userData.setPhoneNumber(userEntity.getPhonenumber());
         userData.setEmail(userEntity.getEmail());
         userData.setDob(userEntity.getDob());
-        userData.setAvatar(userEntity.getAvatar());
+        userData.setAvatar(userEntity.getPhotosImagePath());
 
         Set<Roles> roles = userEntity.getRoles();
         if (!roles.isEmpty()) {
@@ -344,7 +342,7 @@ public class UserService implements UserServiceImp {
         userDetailResponse.setUserId(users.getUserId());
         userDetailResponse.setDob(users.getDob());
         userDetailResponse.setAddress(users.getAddress());
-        userDetailResponse.setAvatar(users.getAvatar());
+        userDetailResponse.setAvatar(users.getPhotosImagePath());
         userDetailResponse.setEmail(users.getEmail());
         userDetailResponse.setFullName(users.getFullname());
         userDetailResponse.setPhoneNumber(users.getPhonenumber());
