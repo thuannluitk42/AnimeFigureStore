@@ -7,6 +7,7 @@ import com.tpsolution.animestore.payload.UpdateProductRequest;
 import com.tpsolution.animestore.service.ProductService;
 import com.tpsolution.animestore.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +27,10 @@ public class ProductController {
     }
 
     @PostMapping(value ="/add-new-product", consumes = { "multipart/form-data" })
-    public ResponseEntity<DataResponse> insertNewProduct(@RequestBody AddProductRequest request,
+    public ResponseEntity<DataResponse> insertNewProduct(@RequestPart("data") AddProductRequest request,
                                                          @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
 
-        if (!multipartFile.isEmpty()) {
+        if (null != multipartFile && !multipartFile.isEmpty()) {
 
             String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
             request.setImages(fileName);
@@ -61,8 +62,13 @@ public class ProductController {
             return ResponseEntity.ok(productService.updateProduct(request));
         }
     }
-    @GetMapping("/paging")
-    public ResponseEntity<DataResponse> getProductAll(SearchRequest searchRequest) {
+    @GetMapping("/searchProduct")
+    public ResponseEntity<DataResponse> getProductAll(@RequestBody SearchRequest searchRequest) {
         return ResponseEntity.ok(productService.getProductAll(searchRequest));
+    }
+
+    @GetMapping("/findAllProduct")
+    public ResponseEntity<DataResponse> findAllProduct() {
+        return ResponseEntity.ok(productService.findAllProduct());
     }
 }

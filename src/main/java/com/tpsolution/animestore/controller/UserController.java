@@ -22,13 +22,11 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    /*Xem chi tiet thong tin 1 user*/
     @GetMapping("/get-info-user/{userId}")
     public ResponseEntity<DataResponse> getInfoDetailUser(@PathVariable String userId) {
         return ResponseEntity.ok().body(userService.getInfoDetailUser(userId));
     }
 
-    /*Them moi 1 user*/
     @PostMapping("/add-new-user")
     public ResponseEntity<DataResponse> insertNewUser(@RequestBody AddUserRequest request) {
         return ResponseEntity.ok(userService.insertNewUser(request));
@@ -48,7 +46,6 @@ public class UserController {
         return ResponseEntity.ok(DataResponse.ok(null));
     }
 
-    /*Cap nhat thong tin 1 user*/
     @PostMapping(value = "/update-info-user", consumes = { "multipart/form-data" })
     public ResponseEntity<DataResponse> updateInfoUser(@RequestPart("data") UpdateUserRequest request,
                                                        @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
@@ -67,7 +64,6 @@ public class UserController {
         }
     }
 
-    /*Thuc hien thay doi mat khau cho user trong trang admin*/
     @PostMapping("/change-password")
     public ResponseEntity<DataResponse> changePassword(@RequestBody ChangePWRequest request) {
         return ResponseEntity.ok(userService.changePW(request));

@@ -11,4 +11,6 @@ public interface ProductServiceImp {
     DataResponse getInfoDetailProduct(String productId);
 
     DataResponse getProductAll(SearchRequest searchRequest);
+
+    DataResponse findAllProduct();
 }

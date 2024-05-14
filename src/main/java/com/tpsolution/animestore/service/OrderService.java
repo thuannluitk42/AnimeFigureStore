@@ -1,14 +1,12 @@
 package com.tpsolution.animestore.service;
 
 import com.tpsolution.animestore.constant.ErrorMessage;
-import com.tpsolution.animestore.entity.Order;
-import com.tpsolution.animestore.entity.Users;
+import com.tpsolution.animestore.dto.OrderDetailDTO;
+import com.tpsolution.animestore.entity.*;
 import com.tpsolution.animestore.exception.BadRequestException;
 import com.tpsolution.animestore.exception.NotFoundException;
 import com.tpsolution.animestore.payload.*;
-import com.tpsolution.animestore.repository.OrderCriteriaRepository;
-import com.tpsolution.animestore.repository.OrderRepository;
-import com.tpsolution.animestore.repository.UsersRepository;
+import com.tpsolution.animestore.repository.*;
 import com.tpsolution.animestore.service.imp.OrderServiceImp;
 import com.tpsolution.animestore.utils.CommonUtils;
 import org.apache.logging.log4j.LogManager;
@@ -22,9 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +33,13 @@ public class OrderService implements OrderServiceImp  {
     OrderRepository orderRepository;
 
     @Autowired
+    OrderDetailRepository orderDetailRepository;
+
+    @Autowired
     UsersRepository usersRepository;
+
+    @Autowired
+    ProductRepository productRepository;
 
     @Autowired
     OrderCriteriaRepository orderCriteriaRepository;
@@ -80,6 +83,28 @@ public class OrderService implements OrderServiceImp  {
             order.setCreatedDate(date);
 
             order = orderRepository.save(order);
+
+            OrderDetail orderDetail;
+            for (OrderDetailDTO item:request.getDetailDTOList()) {
+                orderDetail = new OrderDetail();
+
+                Product product = productRepository.findProductByProductIdAndDeleted(item.getProductId(), Boolean.FALSE);
+
+                if (product == null) {
+                    throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
+                } else {
+                    orderDetail.setProduct(product);
+                }
+
+                orderDetail.setOrder(order);
+                KeyOrdersDetail keyOrdersDetail = new KeyOrdersDetail(order.getOrderId(), userEntity.getUserId());
+                orderDetail.setKeys(keyOrdersDetail);
+                orderDetail.setAmount(item.getAmount());
+                orderDetail.setUnitPrice(item.getUnitPrice());
+                orderDetail.setSubTotal(item.getSubTotal());
+
+                orderDetailRepository.save(orderDetail);
+            }
 
         } catch (Exception e){
             e.printStackTrace();
@@ -218,4 +243,53 @@ public class OrderService implements OrderServiceImp  {
 
         return orderData;
     }
+
+    @Override
+    public DataResponse getInfo4OldBillYesterday() {
+        logger.info("#getInfo4OldBillYesterday");
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate yesterdayDate = currentDate.minusDays(1);
+        List<Order> orderList = orderRepository.get4OrdersWithHighestTotalBillYesterday(yesterdayDate);
+
+        List<DataOrderResponse> dataOrderResponses = new ArrayList<>();
+
+        if (orderList.size() > 0 ) {
+            DataOrderResponse orderData = new DataOrderResponse();
+            for (Order item:orderList) {
+                orderData.setOrderId(UUID.fromString(String.valueOf(item.getOrderId())));
+                orderData.setUsers(item.getUsers());
+                orderData.setPaymentOption(item.getPaymentOption());
+                orderData.setPaymentStatus(item.getPaymentStatus());
+                orderData.setTotalBill(item.getTotal());
+                orderData.setCreatedDay(item.getCreatedDate());
+                dataOrderResponses.add(orderData);
+            }
+        }
+        return DataResponse.ok(dataOrderResponses);
+    }
+    @Override
+    public DataResponse getInfo2OldBillToday() {
+        logger.info("#getInfo2OldBillToday");
+        LocalDate currentDate = LocalDate.now();
+
+        List<Order> orderList = orderRepository.get2OrdersWithHighestTotalBillToday(currentDate);
+        List<DataOrderResponse> dataOrderResponses = new ArrayList<>();
+
+        if (orderList.size() > 0 ) {
+            DataOrderResponse orderData = new DataOrderResponse();
+            for (Order item:orderList) {
+                orderData.setOrderId(UUID.fromString(String.valueOf(item.getOrderId())));
+                orderData.setUsers(item.getUsers());
+                orderData.setPaymentOption(item.getPaymentOption());
+                orderData.setPaymentStatus(item.getPaymentStatus());
+                orderData.setTotalBill(item.getTotal());
+                orderData.setCreatedDay(item.getCreatedDate());
+
+                dataOrderResponses.add(orderData);
+            }
+        }
+        return DataResponse.ok(dataOrderResponses);
+    }
+
 }

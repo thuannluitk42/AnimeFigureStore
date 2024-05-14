@@ -34,4 +34,14 @@ public class OrderController {
     public ResponseEntity<DataResponse> getOrderAll(SearchRequest searchRequest) {
         return ResponseEntity.ok(orderService.getOrderAll(searchRequest));
     }
+
+    @GetMapping("/get-4-old-bill-yesterday")
+    public ResponseEntity<DataResponse> getInfo4OldBillYesterday() {
+        return ResponseEntity.ok().body(orderService.getInfo4OldBillYesterday());
+    }
+
+    @GetMapping("/get-2-new-bill-today")
+    public ResponseEntity<DataResponse> getInfo2OldBillToday() {
+        return ResponseEntity.ok().body(orderService.getInfo2OldBillToday());
+    }
 }

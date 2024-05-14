@@ -6,7 +6,6 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 public class AddProductRequest {
-
     @NotEmpty()
     private String product_name;
     @NotEmpty()

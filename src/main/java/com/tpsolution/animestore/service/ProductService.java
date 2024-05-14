@@ -23,8 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tpsolution.animestore.repository.ProductCriteriaRepository.withProductSearch;
@@ -101,6 +100,9 @@ public class ProductService implements ProductServiceImp {
                 product.setCategory(category);
             }
 
+            Date createDate = new Date();
+            product.setCreatedDate(createDate);
+
             product = productRepository.save(product);
 
         } catch (Exception e){
@@ -161,6 +163,9 @@ public class ProductService implements ProductServiceImp {
                     product.setCategory(category);
                 }
 
+                Date createDate = new Date();
+                product.setCreatedDate(createDate);
+
                 product.setDeleted(false);
 
                 product = productRepository.save(product);
@@ -191,7 +196,7 @@ public class ProductService implements ProductServiceImp {
         productData.setProduct_discount(product.getDiscount());
         productData.setProduct_description(product.getProductDescription());
         productData.setImages(product.getProductImages());
-        productData.setCategory_id(productData.getCategory_id());
+        productData.setCategory_id(product.getCategory().getCategoryId());
 
         return DataResponse.ok(productData);
     }
@@ -207,10 +212,11 @@ public class ProductService implements ProductServiceImp {
         if (page > 0) {
             page = page - 1;
         }
-        Pageable pageableRequest = PageRequest.of(page, searchRequest.getSize(), Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pageableRequest = PageRequest.of(page, searchRequest.getSize(), Sort.by(Sort.Direction.ASC, "createdDate"));
         ProductResponse productResponse = new ProductResponse();
 
         Page<Product> productPage = productCriteriaRepository.findAll(buildSpecification(searchRequest), pageableRequest);
+
         if (!productPage.hasContent()) {
             logger.info("Query with empty data");
             productResponse.setList(Collections.emptyList());
@@ -221,6 +227,29 @@ public class ProductService implements ProductServiceImp {
         productResponse.setTotalPage(productPage.getTotalPages());
         productResponse.setTotalElement(productPage.getTotalElements());
         return DataResponse.ok(productResponse);
+    }
+
+    @Override
+    public DataResponse findAllProduct() {
+        ProductDetailResponse productDetailResponse;
+        List<ProductDetailResponse> list = new ArrayList<>();
+        for (Product p:productRepository.findAll()) {
+             productDetailResponse = new ProductDetailResponse();
+            productDetailResponse.setProductId(p.getProductId());
+            productDetailResponse.setProduct_quantity(p.getProductQuantity());
+            productDetailResponse.setProduct_price(p.getProductPrice());
+            productDetailResponse.setProduct_name(p.getProductName());
+            productDetailResponse.setProduct_description(p.getProductDescription());
+            productDetailResponse.setImages(p.getProductImages());
+            productDetailResponse.setCategory_id(p.getCategory().getCategoryId());
+
+            list.add(productDetailResponse);
+        }
+        if (list.size()==0) {
+            logger.info("findAllProduct empty list");
+            return DataResponse.ok(list);
+        }
+        return DataResponse.ok(list);
     }
 
     private Specification<Product> buildSpecification(SearchRequest searchRequest) {
@@ -236,7 +265,7 @@ public class ProductService implements ProductServiceImp {
     public ProductDetailResponse build(Product product) {
         ProductDetailResponse productDetailResponse = new ProductDetailResponse();
 
-        productDetailResponse.setProductId(UUID.fromString(String.valueOf(product.getProductId())));
+        productDetailResponse.setProductId(product.getProductId());
         productDetailResponse.setProduct_name(product.getProductName());
         productDetailResponse.setProduct_price(product.getProductPrice());
         productDetailResponse.setProduct_quantity(product.getProductQuantity());

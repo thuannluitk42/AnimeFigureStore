@@ -11,4 +11,8 @@ public interface OrderServiceImp {
     DataResponse getInfoDetailOrder(String orderId);
 
     DataResponse getOrderAll(SearchRequest searchRequest);
+
+    DataResponse getInfo4OldBillYesterday();
+
+    DataResponse getInfo2OldBillToday();
 }

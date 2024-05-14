@@ -10,15 +10,15 @@ import org.springframework.stereotype.Repository;
 public interface ProductCriteriaRepository extends JpaSpecificationExecutor<Product>, JpaRepository<Product, Long> {
 
     static Specification<Product> withIsDeleted(Boolean isDeleted) {
-        return (product, query, criteriaBuilder) -> criteriaBuilder.equal(product.get("isDelete"), isDeleted);
+        return (product, query, criteriaBuilder) -> criteriaBuilder.equal(product.get("isDeleted"), isDeleted);
     }
 
     static Specification<Product> withProductSearch(String search) {
         final String lSearch = "%" + search.toLowerCase() + "%";
         return (product, query, criteriaBuilder)
                 -> criteriaBuilder.or(
-                criteriaBuilder.like(criteriaBuilder.lower(product.get("product_name")), lSearch),
-                criteriaBuilder.like(criteriaBuilder.lower(product.get("product_description")), lSearch),
+                criteriaBuilder.like(criteriaBuilder.lower(product.get("productName")), lSearch),
+                criteriaBuilder.like(criteriaBuilder.lower(product.get("productDescription")), lSearch),
                 criteriaBuilder.like(criteriaBuilder.lower(product.get("discount")), lSearch));
     }
 
