@@ -11,7 +11,7 @@ import com.tpsolution.animestore.repository.UserCriteriaRepository;
 import com.tpsolution.animestore.repository.UsersRepository;
 import com.tpsolution.animestore.service.imp.UserServiceImp;
 import com.tpsolution.animestore.utils.CommonUtils;
-import com.tpsolution.animestore.utils.JwtUtilsHelper;
+import com.tpsolution.animestore.security.JwtUtilsHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +88,7 @@ public class UserService implements UserServiceImp {
                 users.setAddress("Nha trang, khánh hòa");
                 users.setPhonenumber("0983172229");
                 users.setDob("23/03/1990");
-                users.setAvatar("");
+                users.setAvatar("default_avatar.jpg");
 
                 users.setDeleted(false);
                 users.setRoles(setRolesRequest);

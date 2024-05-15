@@ -36,7 +36,7 @@ public class UserController {
     public ResponseEntity<DataResponse> insert500NewUser() {
         Set<Integer> roleId = new HashSet<>();
         roleId.add(6);
-        for (int i = 0 ; i < 500 ; i++) {
+        for (int i = 0 ; i < 20 ; i++) {
             AddUserRequest ar = new AddUserRequest();
             ar.setEmail(randomIdentifier()+i+"@yopmail.com");
             ar.setPassword("Abc12345@");
@@ -78,6 +78,5 @@ public class UserController {
     public ResponseEntity<DataResponse> findAllUser() {
         return ResponseEntity.ok(userService.findAllUser());
     }
-
 
 }

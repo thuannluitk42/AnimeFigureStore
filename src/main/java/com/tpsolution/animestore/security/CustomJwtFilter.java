@@ -1,44 +1,55 @@
 package com.tpsolution.animestore.security;
 
-import com.tpsolution.animestore.utils.JwtUtilsHelper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
+// This class helps us to validate the generated jwt token
 @Component
 public class CustomJwtFilter extends OncePerRequestFilter {
     @Autowired
     JwtUtilsHelper jwtUtilsHelper;
 
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    private String getTokenFromHeader(HttpServletRequest request){
+        String authHeader  = request.getHeader("Authorization");
+        String token = null;
+        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")){
+            token = authHeader.substring(7);
+        }
+        return token;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = getTokenFromHeader(request);
+        String username = null;
         if (token != null){
-            if (jwtUtilsHelper.verifyToken(token)){
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken("","",new ArrayList<>());
-                SecurityContext securityContext = SecurityContextHolder.getContext();
-                securityContext.setAuthentication(usernamePasswordAuthenticationToken);
+            username = jwtUtilsHelper.extractUsername(token);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                if (jwtUtilsHelper.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
         }
         filterChain.doFilter(request,response);
     }
-    private String getTokenFromHeader(HttpServletRequest request){
-        String header = request.getHeader("Authorization");
-        String token = null;
-        if (StringUtils.hasText(header) && header.startsWith("Bearer ")){
-            token = header.substring(7);
-        }
-        return token;
-    }
+
 }

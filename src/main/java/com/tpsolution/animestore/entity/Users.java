@@ -85,6 +85,18 @@ public class Users implements Serializable {
 
         return false;
     }
+
+    public String getRoleName() {
+        Iterator<Roles> iterator = roles.iterator();
+        String roleName="";
+        while (iterator.hasNext()) {
+            Roles role = iterator.next();
+            roleName =  role.getRoleName();
+        }
+        return roleName;
+    }
+
+
     @Transient
     public String getPhotosImagePath() {
         if (avatar == null) return null;
