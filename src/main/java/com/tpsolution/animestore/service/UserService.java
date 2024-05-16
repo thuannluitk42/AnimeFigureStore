@@ -269,7 +269,7 @@ public class UserService implements UserServiceImp {
             throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
         }
 
-        DataUserResponse userData = new DataUserResponse();
+        UserDetailResponse userData = new UserDetailResponse();
 
         userData.setUserId(userEntity.getUserId());
         userData.setFullName(userEntity.getFullname());
@@ -278,6 +278,7 @@ public class UserService implements UserServiceImp {
         userData.setEmail(userEntity.getEmail());
         userData.setDob(userEntity.getDob());
         userData.setAvatar(userEntity.getPhotosImagePath());
+        userData.setDeleted(userEntity.isDeleted());
 
         Set<Roles> roles = userEntity.getRoles();
         if (!roles.isEmpty()) {
@@ -285,6 +286,7 @@ public class UserService implements UserServiceImp {
             Roles firstRole = iterator.next();
             int firstRoleId = firstRole.getRoleId();
             userData.setRoleId(firstRoleId);
+            userData.setRoleName(firstRole.getRoleName());
         }
 
         return DataResponse.ok(userData);
@@ -320,17 +322,28 @@ public class UserService implements UserServiceImp {
     @Override
     public DataResponse findAllUser() {
         List<UserDetailResponse> list = new ArrayList<>();
-        for (Users u: usersRepository.findAll()) {
-            UserDetailResponse us = new UserDetailResponse();
-            us.setUserId(u.getUserId());
-            us.setDob(u.getDob());
-            us.setAvatar(u.getPhotosImagePath());
-            us.setAddress(u.getAddress());
-            us.setEmail(u.getEmail());
-            us.setFullName(u.getFullname());
-            us.setPhoneNumber(u.getPhonenumber());
+        for (Users userEntity: usersRepository.findAll()) {
+            UserDetailResponse userData = new UserDetailResponse();
 
-            list.add(us);
+            userData.setUserId(userEntity.getUserId());
+            userData.setFullName(userEntity.getFullname());
+            userData.setAddress(userEntity.getAddress());
+            userData.setPhoneNumber(userEntity.getPhonenumber());
+            userData.setEmail(userEntity.getEmail());
+            userData.setDob(userEntity.getDob());
+            userData.setAvatar(userEntity.getPhotosImagePath());
+            userData.setDeleted(userEntity.isDeleted());
+
+            Set<Roles> roles = userEntity.getRoles();
+            if (!roles.isEmpty()) {
+                Iterator<Roles> iterator = roles.iterator();
+                Roles firstRole = iterator.next();
+                int firstRoleId = firstRole.getRoleId();
+                userData.setRoleId(firstRoleId);
+                userData.setRoleName(firstRole.getRoleName());
+            }
+
+            list.add(userData);
         }
 
         return DataResponse.ok(list);
@@ -346,6 +359,16 @@ public class UserService implements UserServiceImp {
         userDetailResponse.setEmail(users.getEmail());
         userDetailResponse.setFullName(users.getFullname());
         userDetailResponse.setPhoneNumber(users.getPhonenumber());
+        userDetailResponse.setDeleted(users.isDeleted());
+
+        Set<Roles> roles = users.getRoles();
+        if (!roles.isEmpty()) {
+            Iterator<Roles> iterator = roles.iterator();
+            Roles firstRole = iterator.next();
+            int firstRoleId = firstRole.getRoleId();
+            userDetailResponse.setRoleId(firstRoleId);
+            userDetailResponse.setRoleName(firstRole.getRoleName());
+        }
 
         return userDetailResponse;
     }
