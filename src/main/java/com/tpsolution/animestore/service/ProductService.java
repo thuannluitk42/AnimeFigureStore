@@ -188,8 +188,8 @@ public class ProductService implements ProductServiceImp {
             throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
         }
 
-        DataProductResponse productData = new DataProductResponse();
-        productData.setProductId(productId);
+        ProductDetailResponse productData = new ProductDetailResponse();
+        productData.setProductId(Integer.valueOf(productId));
         productData.setProduct_name(product.getProductName());
         productData.setProduct_price(product.getProductPrice());
         productData.setProduct_quantity(product.getProductQuantity());
@@ -197,6 +197,7 @@ public class ProductService implements ProductServiceImp {
         productData.setProduct_description(product.getProductDescription());
         productData.setImages(product.getPhotosImagePath());
         productData.setCategory_id(product.getCategory().getCategoryId());
+        productData.setDeleted(productData.isDeleted());
 
         return DataResponse.ok(productData);
     }
@@ -242,6 +243,7 @@ public class ProductService implements ProductServiceImp {
             productDetailResponse.setProduct_description(p.getProductDescription());
             productDetailResponse.setImages(p.getPhotosImagePath());
             productDetailResponse.setCategory_id(p.getCategory().getCategoryId());
+            productDetailResponse.setDeleted(p.isDeleted());
 
             list.add(productDetailResponse);
         }
