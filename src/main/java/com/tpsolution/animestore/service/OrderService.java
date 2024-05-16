@@ -130,9 +130,8 @@ public class OrderService implements OrderServiceImp  {
     @Transactional
     public DataResponse updateOrder(UpdateOrderRequest request) {
         logger.info("#updateOrder orderId: {}", request.getOrderId());
-        Order order = new Order();
 
-        try {
+
             if (StringUtils.hasText(String.valueOf(request.getOrderId())) == true && !CommonUtils.isNumeric(String.valueOf(request.getOrderId()))) {
                 throw new BadRequestException(ErrorMessage.ORDER_ID_IS_INVALID);
             }
@@ -141,7 +140,7 @@ public class OrderService implements OrderServiceImp  {
                 throw new BadRequestException(ErrorMessage.ORDER_ID_IS_NOT_NULL);
             }
 
-            order = orderRepository.findOrderByOrderIdAndPaymentStatus(Integer.valueOf(String.valueOf(request.getOrderId())),0);
+            Order order = orderRepository.findOrderByOrderIdAndPaymentStatus(Integer.valueOf(String.valueOf(request.getOrderId())),0);
 
             if (order == null) {
 
@@ -169,13 +168,24 @@ public class OrderService implements OrderServiceImp  {
                     order.setVnpayTransactionId(request.getVnpayTransactionId());
                 }
 
+                List<OrderDetail> orderDetailList = orderDetailRepository.findOrderDetailByOrderId(order.getOrderId());
+                List<Product> productList = new ArrayList<>();
+
+                for (OrderDetail od:orderDetailList) {
+                    int amountConsumer = od.getAmount();
+                    KeyOrdersDetail keyOrdersDetail = od.getKeys();
+                    Product p = productRepository.findProductByProductId(keyOrdersDetail.getProductId());
+                    p.setProductQuantity(p.getProductQuantity() - amountConsumer);
+                    productList.add(p);
+                }
+
+                if (productList.size() > 0) {
+                    productRepository.saveAll(productList);
+                }
+
                 order = orderRepository.save(order);
 
             }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
 
         return DataResponse.ok(order);
     }
