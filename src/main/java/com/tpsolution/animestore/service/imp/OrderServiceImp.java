@@ -8,7 +8,7 @@ public interface OrderServiceImp {
 
     DataResponse updateOrder(UpdateOrderRequest request);
 
-    DataResponse getInfoDetailOrder(String orderId);
+    DataResponse getInfoDetailOrder(int orderId);
 
     DataResponse getOrderAll(SearchRequest searchRequest);
 
