@@ -269,25 +269,7 @@ public class UserService implements UserServiceImp {
             throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
         }
 
-        UserDetailResponse userData = new UserDetailResponse();
-
-        userData.setUserId(userEntity.getUserId());
-        userData.setFullName(userEntity.getFullname());
-        userData.setAddress(userEntity.getAddress());
-        userData.setPhoneNumber(userEntity.getPhonenumber());
-        userData.setEmail(userEntity.getEmail());
-        userData.setDob(userEntity.getDob());
-        userData.setAvatar(userEntity.getPhotosImagePath());
-        userData.setDeleted(userEntity.isDeleted());
-
-        Set<Roles> roles = userEntity.getRoles();
-        if (!roles.isEmpty()) {
-            Iterator<Roles> iterator = roles.iterator();
-            Roles firstRole = iterator.next();
-            int firstRoleId = firstRole.getRoleId();
-            userData.setRoleId(firstRoleId);
-            userData.setRoleName(firstRole.getRoleName());
-        }
+        UserDetailResponse userData = build(userEntity);
 
         return DataResponse.ok(userData);
     }
@@ -323,26 +305,7 @@ public class UserService implements UserServiceImp {
     public DataResponse findAllUser() {
         List<UserDetailResponse> list = new ArrayList<>();
         for (Users userEntity: usersRepository.findAll()) {
-            UserDetailResponse userData = new UserDetailResponse();
-
-            userData.setUserId(userEntity.getUserId());
-            userData.setFullName(userEntity.getFullname());
-            userData.setAddress(userEntity.getAddress());
-            userData.setPhoneNumber(userEntity.getPhonenumber());
-            userData.setEmail(userEntity.getEmail());
-            userData.setDob(userEntity.getDob());
-            userData.setAvatar(userEntity.getPhotosImagePath());
-            userData.setDeleted(userEntity.isDeleted());
-
-            Set<Roles> roles = userEntity.getRoles();
-            if (!roles.isEmpty()) {
-                Iterator<Roles> iterator = roles.iterator();
-                Roles firstRole = iterator.next();
-                int firstRoleId = firstRole.getRoleId();
-                userData.setRoleId(firstRoleId);
-                userData.setRoleName(firstRole.getRoleName());
-            }
-
+            UserDetailResponse userData = build(userEntity);
             list.add(userData);
         }
 
@@ -381,6 +344,7 @@ public class UserService implements UserServiceImp {
         userDetailResponse.setFullName(users.getFullname());
         userDetailResponse.setPhoneNumber(users.getPhonenumber());
         userDetailResponse.setDeleted(users.isDeleted());
+        userDetailResponse.setPassword(users.getPassword());
 
         Set<Roles> roles = users.getRoles();
         if (!roles.isEmpty()) {

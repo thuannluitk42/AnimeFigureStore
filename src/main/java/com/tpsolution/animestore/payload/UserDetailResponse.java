@@ -22,4 +22,5 @@ public class UserDetailResponse {
     private boolean isDeleted;
     private int roleId;
     private String roleName;
+    private String password;
 }
