@@ -16,4 +16,7 @@ public interface ProductRepository extends CrudRepository<Product, UUID>, JpaSpe
 
     @Query("SELECT u from Product u  where u.productId =:productId and u.isDeleted =:isDelete")
     Product findProductByProductIdAndDeleted(int productId, Boolean isDelete);
+
+    @Query("SELECT u from Product u  where u.productId =:productId")
+    Product findProductByProductId(int productId);
 }

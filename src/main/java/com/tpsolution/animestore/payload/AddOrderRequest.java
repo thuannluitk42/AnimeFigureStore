@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 public class AddOrderRequest {
-    private UUID userId;
+    private int userId;
     private double totalBill;
     private List<OrderDetailDTO> detailDTOList;
 

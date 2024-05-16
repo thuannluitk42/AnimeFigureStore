@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-
-
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -17,13 +14,13 @@ public class OrderDetail implements Serializable {
     @EmbeddedId
     KeyOrdersDetail keys;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+//    @ManyToOne
+//    @JoinColumn(name = "order_id")
+//    private Order order;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "product_id")
+//    private Product product;
 
     @Column(name = "amount")
     private int amount;

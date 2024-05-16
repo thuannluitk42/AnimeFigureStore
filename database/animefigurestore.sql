@@ -29,11 +29,15 @@ CREATE TABLE `orders` (
 CREATE TABLE `orders_detail` (
                                  `order_id` int NOT NULL,
                                  `product_id` int NOT NULL,
-                                 `unit_price;` decimal(10,0) DEFAULT NULL COMMENT 'gia luc tinh tien',
+                                 `unit_price` decimal(10,0) DEFAULT NULL COMMENT 'gia luc tinh tien',
                                  `amount` int DEFAULT NULL,
-                                 `sub_total` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                 `sub_total` int DECIMAL(10,0) DEFAULT NULL COMMENT 'tong gia bill detail',
                                  PRIMARY KEY (`order_id`,`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+ALTER TABLE `animefigurestore`.`orders_detail`
+    CHANGE COLUMN `sub_total` `sub_total` DECIMAL(10,0) NULL ;
+ALTER TABLE `animefigurestore`.`orders_detail`
+    CHANGE COLUMN `unit_price;` `unit_price` DECIMAL(10,0) NULL DEFAULT NULL COMMENT 'gia luc tinh tien' ;
 
 
 -- animefigurestore.products definition

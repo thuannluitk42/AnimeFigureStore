@@ -15,4 +15,6 @@ public interface OrderServiceImp {
     DataResponse getInfo4OldBillYesterday();
 
     DataResponse getInfo2OldBillToday();
+
+    DataResponse getAllOrder();
 }

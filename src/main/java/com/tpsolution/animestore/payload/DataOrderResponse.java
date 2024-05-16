@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -21,4 +23,6 @@ public class DataOrderResponse {
     private int vnpayTransactionId ;
     private double totalBill;
     private Date createdDay ;
+    private String username;
+    private List<DataOrderDetailResponse> listOrderDetail;
 }

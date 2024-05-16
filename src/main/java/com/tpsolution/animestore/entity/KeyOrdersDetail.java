@@ -14,6 +14,6 @@ public class KeyOrdersDetail implements Serializable {
 
     @Column(name = "order_id", insertable=false, updatable=false)
     private int orderId;
-    @Column(name = "food_id", insertable=false, updatable=false)
-    private int foodId;
+    @Column(name = "product_id", insertable=false, updatable=false)
+    private int productId;
 }
