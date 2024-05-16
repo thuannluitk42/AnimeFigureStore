@@ -44,4 +44,9 @@ public class OrderController {
     public ResponseEntity<DataResponse> getInfo2OldBillToday() {
         return ResponseEntity.ok().body(orderService.getInfo2OldBillToday());
     }
+
+    @GetMapping("/list-order")
+    public ResponseEntity<DataResponse> getAllOrder() {
+        return ResponseEntity.ok().body(orderService.getAllOrder());
+    }
 }

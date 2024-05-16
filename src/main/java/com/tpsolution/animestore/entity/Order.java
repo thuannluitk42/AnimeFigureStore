@@ -8,8 +8,6 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -46,6 +44,6 @@ public class Order implements Serializable {
     @Column(name = "created_date")
     private Date createdDate;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<OrderDetail> orderDetails = new HashSet<>();
+//    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<OrderDetail> orderDetails = new HashSet<>();
 }

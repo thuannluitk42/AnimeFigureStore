@@ -46,11 +46,10 @@ public class OrderService implements OrderServiceImp  {
     @Override
     @Transactional
     public DataResponse insertNewOrder(AddOrderRequest request) {
-        logger.info("#insertNewOrder");
+        logger.info("#insertNewOrder: "+request.getUserId());
         Order order = new Order();
 
-        try {
-            if (StringUtils.hasText(String.valueOf(request.getUserId())) && CommonUtils.isNumeric(String.valueOf(request.getUserId()))) {
+            if (StringUtils.hasText(String.valueOf(request.getUserId())) && !CommonUtils.isNumeric(String.valueOf(request.getUserId()))) {
                 throw new BadRequestException(ErrorMessage.USER_ID_IS_INVALID);
             }
 
@@ -69,7 +68,7 @@ public class OrderService implements OrderServiceImp  {
             order.setPaymentStatus(0);
             order.setDeliveryAddress(userEntity.getAddress());
 
-            if (StringUtils.hasText(String.valueOf(request.getTotalBill())) && CommonUtils.isNumeric(String.valueOf(request.getTotalBill()))) {
+            if (StringUtils.hasText(String.valueOf(request.getTotalBill())) && !CommonUtils.isNumeric(String.valueOf(request.getTotalBill()))) {
                 throw new BadRequestException(ErrorMessage.TOTAL_ORDER_IS_INVALID);
             }
 
@@ -84,19 +83,15 @@ public class OrderService implements OrderServiceImp  {
 
             order = orderRepository.save(order);
 
-            OrderDetail orderDetail;
             for (OrderDetailDTO item:request.getDetailDTOList()) {
-                orderDetail = new OrderDetail();
+                OrderDetail orderDetail = new OrderDetail();
 
                 Product product = productRepository.findProductByProductIdAndDeleted(item.getProductId(), Boolean.FALSE);
 
                 if (product == null) {
                     throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
-                } else {
-                    orderDetail.setProduct(product);
                 }
 
-                orderDetail.setOrder(order);
                 KeyOrdersDetail keyOrdersDetail = new KeyOrdersDetail(order.getOrderId(), userEntity.getUserId());
                 orderDetail.setKeys(keyOrdersDetail);
                 orderDetail.setAmount(item.getAmount());
@@ -105,10 +100,6 @@ public class OrderService implements OrderServiceImp  {
 
                 orderDetailRepository.save(orderDetail);
             }
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
 
         return DataResponse.ok(order);
     }
@@ -290,6 +281,54 @@ public class OrderService implements OrderServiceImp  {
             }
         }
         return DataResponse.ok(dataOrderResponses);
+    }
+
+    @Override
+    public DataResponse getAllOrder() {
+        logger.info("#getAllOrder");
+        List<Order> orderList = (List<Order>) orderRepository.findAll();
+        List<DataOrderResponse> dataOrderResponses = new ArrayList<>();
+
+        if (orderList.size() == 0){
+            logger.info("data order is empty");
+        } else {
+            for (Order item :orderList) {
+                DataOrderResponse orderResponse = new DataOrderResponse();
+                orderResponse.setOrderId(UUID.fromString(String.valueOf(item.getOrderId())));
+                orderResponse.setUsers(item.getUsers());
+                orderResponse.setUsername(item.getUsers().getUsername());
+                orderResponse.setTotalBill(item.getTotal());
+                orderResponse.setCreatedDay(item.getCreatedDate());
+                orderResponse.setListOrderDetail(getListOrderDetailById(item.getOrderId()));
+
+                dataOrderResponses.add(orderResponse);
+            }
+
+        }
+        return DataResponse.ok(dataOrderResponses);
+    }
+
+    private List<DataOrderDetailResponse> getListOrderDetailById (int orderId) {
+        logger.info("#getListOrderDetailById: "+orderId);
+        List<OrderDetail> listOrderDetail = orderDetailRepository.findOrderDetailByOrderId(orderId);
+        List<DataOrderDetailResponse> listOrderDetailResponses = null;
+
+        if (listOrderDetail.size() == 0){
+            logger.info("#getListOrderDetailById: "+orderId + "is empty data");
+        } else {
+            for (OrderDetail od : listOrderDetail) {
+                DataOrderDetailResponse item = new DataOrderDetailResponse();
+                Product p = productRepository.findProductByProductId(1);
+                item.setProductName(p.getProductName());
+                item.setAmount(od.getAmount());
+                item.setUnitPrice(od.getUnitPrice());
+                item.setSubTotal(od.getSubTotal());
+
+                listOrderDetailResponses.add(item);
+            }
+        }
+        return listOrderDetailResponses;
+
     }
 
 }
