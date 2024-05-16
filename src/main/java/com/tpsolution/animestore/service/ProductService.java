@@ -235,7 +235,7 @@ public class ProductService implements ProductServiceImp {
         ProductDetailResponse productDetailResponse;
         List<ProductDetailResponse> list = new ArrayList<>();
         for (Product p:productRepository.findAll()) {
-             productDetailResponse = new ProductDetailResponse();
+            productDetailResponse = new ProductDetailResponse();
             productDetailResponse.setProductId(p.getProductId());
             productDetailResponse.setProduct_quantity(p.getProductQuantity());
             productDetailResponse.setProduct_price(p.getProductPrice());
@@ -275,6 +275,7 @@ public class ProductService implements ProductServiceImp {
         productDetailResponse.setImages(product.getPhotosImagePath());
         productDetailResponse.setCategory_id(product.getCategory().getCategoryId());
         productDetailResponse.setProduct_discount(product.getDiscount());
+        productDetailResponse.setDeleted(product.isDeleted());
 
         return productDetailResponse;
     }
