@@ -83,6 +83,18 @@ public class OrderService implements OrderServiceImp  {
 
             order = orderRepository.save(order);
 
+            DataOrderResponse orderResponse = new DataOrderResponse();
+            orderResponse.setOrderId(order.getOrderId());
+            orderResponse.setUserId(userEntity.getUserId());
+            orderResponse.setPaymentStatus(order.getPaymentStatus());
+            orderResponse.setPaymentOption(order.getPaymentOption());
+            orderResponse.setCreatedDay(order.getCreatedDate());
+            orderResponse.setVnpayTransactionId(order.getVnpayTransactionId());
+            orderResponse.setTotalBill(order.getTotal());
+            orderResponse.setUsername(userEntity.getUsername());
+
+            List<DataOrderDetailResponse> listOrderDetail = new ArrayList<>();
+
             for (OrderDetailDTO item:request.getDetailDTOList()) {
                 OrderDetail orderDetail = new OrderDetail();
 
@@ -92,16 +104,26 @@ public class OrderService implements OrderServiceImp  {
                     throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
                 }
 
-                KeyOrdersDetail keyOrdersDetail = new KeyOrdersDetail(order.getOrderId(), userEntity.getUserId());
+                KeyOrdersDetail keyOrdersDetail = new KeyOrdersDetail(order.getOrderId(), product.getProductId());
                 orderDetail.setKeys(keyOrdersDetail);
                 orderDetail.setAmount(item.getAmount());
                 orderDetail.setUnitPrice(item.getUnitPrice());
                 orderDetail.setSubTotal(item.getSubTotal());
 
+                DataOrderDetailResponse dataOrderDetailResponse = new DataOrderDetailResponse();
+                dataOrderDetailResponse.setProductName(product.getProductName());
+                dataOrderDetailResponse.setAmount(item.getAmount());
+                dataOrderDetailResponse.setUnitPrice(item.getUnitPrice());
+                dataOrderDetailResponse.setSubTotal(item.getSubTotal());
+
+                listOrderDetail.add(dataOrderDetailResponse);
+
                 orderDetailRepository.save(orderDetail);
             }
 
-        return DataResponse.ok(order);
+        orderResponse.setListOrderDetail(listOrderDetail);
+
+        return DataResponse.ok(orderResponse);
     }
 
     @Override
@@ -159,7 +181,7 @@ public class OrderService implements OrderServiceImp  {
     }
 
     @Override
-    public DataResponse getInfoDetailOrder(String orderId) {
+    public DataResponse getInfoDetailOrder(int orderId) {
         logger.info("#getInfoDetailOrder: "+orderId);
         Order order = orderRepository.findOrderByOrderId(Integer.valueOf(orderId));
 
@@ -168,15 +190,16 @@ public class OrderService implements OrderServiceImp  {
         }
 
         DataOrderResponse orderData = new DataOrderResponse();
-        orderData.setOrderId(UUID.fromString(orderId));
+        orderData.setOrderId(orderId);
 
-        Users userEntity = usersRepository.getUsersByUserId(Integer.valueOf(String.valueOf(order.getUsers().getUserId())));
+        Users userEntity = usersRepository.getUsersByUserId(order.getUsers().getUserId());
 
         if (null == userEntity) {
             throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
         }
 
-        orderData.setUsers(userEntity);
+        orderData.setUserId(userEntity.getUserId());
+        orderData.setUsername(userEntity.getUsername());
 
         orderData.setTotalBill(order.getTotal());
         orderData.setPaymentOption(order.getPaymentOption());
@@ -216,15 +239,16 @@ public class OrderService implements OrderServiceImp  {
 
     public DataOrderResponse build(Order order) {
         DataOrderResponse orderData = new DataOrderResponse();
-        orderData.setOrderId(UUID.fromString(String.valueOf(order.getOrderId())));
+        orderData.setOrderId(order.getOrderId());
 
-        Users userEntity = usersRepository.getUsersByUserId(Integer.valueOf(String.valueOf(order.getUsers().getUserId())));
+        Users userEntity = usersRepository.getUsersByUserId(order.getUsers().getUserId());
 
         if (null == userEntity) {
             throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
         }
 
-        orderData.setUsers(userEntity);
+        orderData.setUserId(userEntity.getUserId());
+        orderData.setUsername(userEntity.getUsername());
 
         orderData.setTotalBill(order.getTotal());
         orderData.setPaymentOption(order.getPaymentOption());
@@ -248,8 +272,17 @@ public class OrderService implements OrderServiceImp  {
         if (orderList.size() > 0 ) {
             DataOrderResponse orderData = new DataOrderResponse();
             for (Order item:orderList) {
-                orderData.setOrderId(UUID.fromString(String.valueOf(item.getOrderId())));
-                orderData.setUsers(item.getUsers());
+                orderData.setOrderId(item.getOrderId());
+
+                Users userEntity = usersRepository.getUsersByUserId(item.getUsers().getUserId());
+
+                if (null == userEntity) {
+                    throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+                }
+
+                orderData.setUserId(userEntity.getUserId());
+                orderData.setUsername(userEntity.getUsername());
+
                 orderData.setPaymentOption(item.getPaymentOption());
                 orderData.setPaymentStatus(item.getPaymentStatus());
                 orderData.setTotalBill(item.getTotal());
@@ -270,8 +303,17 @@ public class OrderService implements OrderServiceImp  {
         if (orderList.size() > 0 ) {
             DataOrderResponse orderData = new DataOrderResponse();
             for (Order item:orderList) {
-                orderData.setOrderId(UUID.fromString(String.valueOf(item.getOrderId())));
-                orderData.setUsers(item.getUsers());
+                orderData.setOrderId(item.getOrderId());
+
+                Users userEntity = usersRepository.getUsersByUserId(item.getUsers().getUserId());
+
+                if (null == userEntity) {
+                    throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+                }
+
+                orderData.setUserId(userEntity.getUserId());
+                orderData.setUsername(userEntity.getUsername());
+
                 orderData.setPaymentOption(item.getPaymentOption());
                 orderData.setPaymentStatus(item.getPaymentStatus());
                 orderData.setTotalBill(item.getTotal());
@@ -294,9 +336,17 @@ public class OrderService implements OrderServiceImp  {
         } else {
             for (Order item :orderList) {
                 DataOrderResponse orderResponse = new DataOrderResponse();
-                orderResponse.setOrderId(UUID.fromString(String.valueOf(item.getOrderId())));
-                orderResponse.setUsers(item.getUsers());
-                orderResponse.setUsername(item.getUsers().getUsername());
+                orderResponse.setOrderId(item.getOrderId());
+
+                Users userEntity = usersRepository.getUsersByUserId(item.getUsers().getUserId());
+
+                if (null == userEntity) {
+                    throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+                }
+
+                orderResponse.setUserId(userEntity.getUserId());
+                orderResponse.setUsername(userEntity.getUsername());
+
                 orderResponse.setTotalBill(item.getTotal());
                 orderResponse.setCreatedDay(item.getCreatedDate());
                 orderResponse.setListOrderDetail(getListOrderDetailById(item.getOrderId()));
@@ -311,7 +361,7 @@ public class OrderService implements OrderServiceImp  {
     private List<DataOrderDetailResponse> getListOrderDetailById (int orderId) {
         logger.info("#getListOrderDetailById: "+orderId);
         List<OrderDetail> listOrderDetail = orderDetailRepository.findOrderDetailByOrderId(orderId);
-        List<DataOrderDetailResponse> listOrderDetailResponses = null;
+        List<DataOrderDetailResponse> listOrderDetailResponses = new ArrayList<>();
 
         if (listOrderDetail.size() == 0){
             logger.info("#getListOrderDetailById: "+orderId + "is empty data");

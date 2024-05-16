@@ -17,8 +17,8 @@ public class OrderController {
     OrderService orderService;
 
     @GetMapping("/get-info-order/{orderId}")
-    public ResponseEntity<DataResponse> getInfoDetailOrder(@PathVariable String orderIdId) {
-        return ResponseEntity.ok().body(orderService.getInfoDetailOrder(orderIdId));
+    public ResponseEntity<DataResponse> getInfoDetailOrder(@PathVariable int orderId) {
+        return ResponseEntity.ok().body(orderService.getInfoDetailOrder(orderId));
     }
 
     @PostMapping(value ="/add-new-order")

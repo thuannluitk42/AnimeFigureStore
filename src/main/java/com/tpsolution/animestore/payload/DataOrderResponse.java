@@ -16,8 +16,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DataOrderResponse {
-    private UUID orderId;
-    private Users users;
+    private int orderId;
+    private int userId;
     private int paymentOption;
     private int paymentStatus;
     private int vnpayTransactionId ;
