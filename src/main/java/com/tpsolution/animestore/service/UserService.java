@@ -349,6 +349,20 @@ public class UserService implements UserServiceImp {
         return DataResponse.ok(list);
     }
 
+    @Override
+    public DataResponse disableStatusUser(int userId) {
+        logger.info("#disableStatusUser: "+userId);
+        Users userEntity = usersRepository.getUsersByUserId(Integer.valueOf(userId));
+
+        if (null == userEntity) {
+            throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+        }
+        userEntity.setDeleted(Boolean.TRUE);
+        userEntity = usersRepository.save(userEntity);
+        return DataResponse.ok(userEntity);
+
+    }
+
     public UserDetailResponse build(Users users) {
         UserDetailResponse userDetailResponse = new UserDetailResponse();
 

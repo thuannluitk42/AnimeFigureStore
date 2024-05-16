@@ -19,4 +19,6 @@ public interface UserServiceImp {
     DataResponse getUserAll(SearchRequest searchRequest);
 
     DataResponse findAllUser();
+
+    DataResponse disableStatusUser(int userId);
 }

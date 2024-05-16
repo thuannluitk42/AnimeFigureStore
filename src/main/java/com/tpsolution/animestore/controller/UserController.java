@@ -79,4 +79,9 @@ public class UserController {
         return ResponseEntity.ok(userService.findAllUser());
     }
 
+    @DeleteMapping("/delete-user/{userId}")
+    public ResponseEntity<DataResponse> disableStatusUser(@PathVariable int userId) {
+        return ResponseEntity.ok(userService.disableStatusUser(userId));
+    }
+
 }
