@@ -92,7 +92,6 @@ public class Users implements Serializable {
         return roleName;
     }
 
-
     @Transient
     public String getPhotosImagePath() {
         if (avatar == null) {

@@ -86,9 +86,8 @@ public class UserService implements UserServiceImp {
                 // cac gia tri duoc khoi tao mac dinh khi user dc tao lan dau tien
                 users.setFullname(CommonUtils.extractUsernameFromEmail(request.getEmail()));
                 users.setAddress("Nha trang, khánh hòa");
-                users.setPhonenumber("0983172229");
-                users.setDob("23/03/1990");
-                //users.setAvatar("");
+                users.setPhonenumber("0981211117");
+                users.setDob("01/01/1990");
 
                 users.setDeleted(false);
                 users.setRoles(setRolesRequest);
@@ -102,7 +101,6 @@ public class UserService implements UserServiceImp {
             } else {
                 throw new BadRequestException(ErrorMessage.USER_IS_EXISTED);
             }
-
 
         return DataResponse.ok(users);
     }
@@ -184,7 +182,6 @@ public class UserService implements UserServiceImp {
                 users = usersRepository.save(users);
 
             }
-
 
         return DataResponse.ok(users);
     }

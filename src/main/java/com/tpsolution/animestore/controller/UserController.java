@@ -48,8 +48,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/update-info-user", consumes = { "multipart/form-data" })
-    public ResponseEntity<DataResponse> updateInfoUser(@RequestPart("data") UpdateUserRequest request,
-                                                       @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<DataResponse> updateInfoUser(@RequestPart("data") UpdateUserRequest request, @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
         if (!multipartFile.isEmpty()) {
             String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
             request.setUrlImage(fileName);
