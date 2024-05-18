@@ -50,19 +50,13 @@ public class UserController {
     @PostMapping(value = "/update-info-user", consumes = { "multipart/form-data" })
     public ResponseEntity<DataResponse> updateInfoUser(@RequestPart("data") UpdateUserRequest request,
                                                        @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
-
         if (!multipartFile.isEmpty()) {
-
             String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
             request.setUrlImage(fileName);
             String uploadDir = "user-photos/" + request.getUserId();
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-
-            return ResponseEntity.ok(userService.updateUser(request));
-        } else {
-
-            return ResponseEntity.ok(userService.updateUser(request));
         }
+        return ResponseEntity.ok(userService.updateUser(request));
     }
 
     @PostMapping("/change-password")

@@ -95,9 +95,11 @@ public class Users implements Serializable {
 
     @Transient
     public String getPhotosImagePath() {
-        if (avatar == null) return null;
-
-        return "/user-photos/" + userId + "/" + avatar;
+        if (avatar == null) {
+            return "/user-photos/default_avatar.jpg";
+        } else {
+            return "/user-photos/" + userId + "/" + avatar;
+        }
     }
 
 }

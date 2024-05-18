@@ -88,7 +88,7 @@ public class UserService implements UserServiceImp {
                 users.setAddress("Nha trang, khánh hòa");
                 users.setPhonenumber("0983172229");
                 users.setDob("23/03/1990");
-                users.setAvatar("default_avatar.jpg");
+                //users.setAvatar("");
 
                 users.setDeleted(false);
                 users.setRoles(setRolesRequest);
