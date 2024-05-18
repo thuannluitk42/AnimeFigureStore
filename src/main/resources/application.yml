@@ -38,5 +38,10 @@ jwt:
 mvc:
   static-path: /images
 
-
-
+  #STEP 1: Download Firebase config file and store it as "firebase.json" under the src/main/resources folder
+  # https://support.google.com/firebase/answer/7015592?hl=en
+  #STEP 2: Make data public on Google Cloud
+  # https://cloud.google.com/storage/docs/access-control/making-data-public
+firebase:
+  image-url: https://storage.googleapis.com/storemanagement-62866.appspot.com/animefigurestore/%s
+  bucket-name: storemanagement-62866.appspot.com

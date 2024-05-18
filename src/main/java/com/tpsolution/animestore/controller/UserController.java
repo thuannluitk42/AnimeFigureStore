@@ -2,6 +2,7 @@ package com.tpsolution.animestore.controller;
 
 import com.tpsolution.animestore.payload.*;
 import com.tpsolution.animestore.service.UserService;
+import com.tpsolution.animestore.service.imp.IImageServiceImp;
 import com.tpsolution.animestore.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    IImageServiceImp iImageServiceImp;
 
     @GetMapping("/get-info-user/{userId}")
     public ResponseEntity<DataResponse> getInfoDetailUser(@PathVariable String userId) {
@@ -51,15 +55,12 @@ public class UserController {
                                                        @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
 
         if (!multipartFile.isEmpty()) {
-
             String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
             request.setUrlImage(fileName);
             String uploadDir = "user-photos/" + request.getUserId();
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-
             return ResponseEntity.ok(userService.updateUser(request));
         } else {
-
             return ResponseEntity.ok(userService.updateUser(request));
         }
     }
