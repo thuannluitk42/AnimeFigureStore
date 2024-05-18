@@ -44,6 +44,9 @@ public class Users implements Serializable {
     @Column(name = "avatar",nullable = true)
     private String avatar;
 
+    @Column(name = "url_image",nullable = true)
+    private String urlImage;
+
     @Column(name = "is_deleted",nullable = true)
     private boolean isDeleted;
 

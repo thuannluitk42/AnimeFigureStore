@@ -20,7 +20,5 @@ public interface UserServiceImp {
 
     DataResponse findAllUser();
 
-    DataResponse disableStatusUser(DeleteIDsRequest request);
-
-    DataResponse activeStatusUser(DeleteIDsRequest request);
+    DataResponse changeStatusUser(DeleteIDsRequest request);
 }

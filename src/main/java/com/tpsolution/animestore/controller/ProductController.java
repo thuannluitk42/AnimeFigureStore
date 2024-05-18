@@ -5,6 +5,7 @@ import com.tpsolution.animestore.payload.DataResponse;
 import com.tpsolution.animestore.payload.SearchRequest;
 import com.tpsolution.animestore.payload.UpdateProductRequest;
 import com.tpsolution.animestore.service.ProductService;
+import com.tpsolution.animestore.service.imp.IImageServiceImp;
 import com.tpsolution.animestore.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,10 @@ public class ProductController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    IImageServiceImp imageService;
+
     @GetMapping("/get-info-product/{productId}")
     public ResponseEntity<DataResponse> getInfoDetailProduct(@PathVariable String productId) {
         return ResponseEntity.ok().body(productService.getInfoDetailProduct(productId));
@@ -31,17 +36,18 @@ public class ProductController {
 
         if (null != multipartFile && !multipartFile.isEmpty()) {
 
-            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-            request.setImages(fileName);
-            String uploadDir = "product-photos/";
-            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+//            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+//            request.setImages(fileName);
+//            String uploadDir = "product-photos/";
+//            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 
-            return ResponseEntity.ok(productService.insertNewProduct(request));
-
-        } else {
-
-            return ResponseEntity.ok(productService.insertNewProduct(request));
+            String nameImage = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            String fileName = imageService.save(multipartFile);
+            String imageUrl = imageService.getImageUrl(fileName);
+            request.setUrlImage(imageUrl);
+            request.setNameImage(nameImage);
         }
+            return ResponseEntity.ok(productService.insertNewProduct(request));
     }
 
     @PostMapping(value = "/update-info-product", consumes = { "multipart/form-data" })
@@ -50,16 +56,18 @@ public class ProductController {
 
         if (!multipartFile.isEmpty()) {
 
-            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-            request.setImages(fileName);
-            String uploadDir = "product-photos/";
-            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+//            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+//            request.setImages(fileName);
+//            String uploadDir = "product-photos/";
+//            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+            String nameImage = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            String fileName = imageService.save(multipartFile);
+            String imageUrl = imageService.getImageUrl(fileName);
+            request.setUrlImage(imageUrl);
+            request.setNameImage(nameImage);
 
-            return ResponseEntity.ok(productService.updateProduct(request));
-        } else {
-
-            return ResponseEntity.ok(productService.updateProduct(request));
         }
+        return ResponseEntity.ok(productService.updateProduct(request));
     }
     @GetMapping("/search-product")
     public ResponseEntity<DataResponse> getProductAll(@RequestBody SearchRequest searchRequest) {

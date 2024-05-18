@@ -11,8 +11,6 @@ public class AddProductRequest {
     @NotEmpty()
     private double product_price;
     @NotEmpty()
-    private String images;
-    @NotEmpty()
     private int product_quantity ;
     @NotEmpty()
     private String product_description ;
@@ -20,4 +18,7 @@ public class AddProductRequest {
     private String product_discount ;
     @NotEmpty()
     private int category_id;
+
+    private String nameImage;
+    private String urlImage;
 }

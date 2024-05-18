@@ -66,15 +66,16 @@ public class ProductService implements ProductServiceImp {
 
             product.setProductPrice(request.getProduct_price());
 
-            if (StringUtils.hasText(request.getImages()) == false) {
+            if (StringUtils.hasText(request.getNameImage()) == false) {
                 throw new BadRequestException(ErrorMessage.PRODUCT_IMAGES_IS_INVALID);
             }
 
-            if (StringUtils.hasText(request.getImages()) && CommonUtils.isImageFile(request.getImages())) {
+            if (StringUtils.hasText(request.getNameImage()) && CommonUtils.isImageFile(request.getNameImage())) {
                 throw new BadRequestException(ErrorMessage.PRODUCT_IMAGES_IS_INVALID);
             }
 
-            product.setProductImages(request.getImages());
+            product.setProductImages(request.getNameImage());
+            product.setUrlImage(request.getUrlImage());
 
             if (StringUtils.hasText(String.valueOf(request.getProduct_quantity())) && request.getProduct_quantity() < 0) {
                 throw new BadRequestException(ErrorMessage.PRODUCT_QUANTITY_IS_INVALID);
@@ -141,8 +142,12 @@ public class ProductService implements ProductServiceImp {
                     product.setProductPrice(request.getProduct_price());
                 }
 
-                if (StringUtils.hasText(request.getImages())) {
-                    product.setProductImages(request.getImages());
+                if (StringUtils.hasText(request.getNameImage())) {
+                    product.setProductImages(request.getNameImage());
+                }
+
+                if (StringUtils.hasText(request.getUrlImage())) {
+                    product.setUrlImage(request.getUrlImage());
                 }
 
                 if (StringUtils.hasText(String.valueOf(request.getProduct_quantity())) && request.getProduct_quantity() > 0) {
@@ -195,7 +200,7 @@ public class ProductService implements ProductServiceImp {
         productData.setProduct_quantity(product.getProductQuantity());
         productData.setProduct_discount(product.getDiscount());
         productData.setProduct_description(product.getProductDescription());
-        productData.setImages(product.getPhotosImagePath());
+        productData.setImages(product.getUrlImage());
         productData.setCategory_id(product.getCategory().getCategoryId());
         productData.setDeleted(productData.isDeleted());
 

@@ -1,8 +1,8 @@
 package com.tpsolution.animestore.controller;
 
 import com.tpsolution.animestore.payload.*;
-import com.tpsolution.animestore.service.UserService;
 import com.tpsolution.animestore.service.imp.IImageServiceImp;
+import com.tpsolution.animestore.service.imp.UserServiceImp;
 import com.tpsolution.animestore.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +21,10 @@ import static com.tpsolution.animestore.utils.CommonUtils.randomIdentifier;
 public class UserController {
 
     @Autowired
-    UserService userService;
+    UserServiceImp userService;
 
     @Autowired
-    IImageServiceImp iImageServiceImp;
+    IImageServiceImp imageService;
 
     @GetMapping("/get-info-user/{userId}")
     public ResponseEntity<DataResponse> getInfoDetailUser(@PathVariable String userId) {
@@ -55,15 +55,32 @@ public class UserController {
                                                        @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
 
         if (!multipartFile.isEmpty()) {
-            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-            request.setUrlImage(fileName);
-            String uploadDir = "user-photos/" + request.getUserId();
-            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-            return ResponseEntity.ok(userService.updateUser(request));
-        } else {
-            return ResponseEntity.ok(userService.updateUser(request));
+            String nameImage = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+//            request.setUrlImage(fileName);
+//            String uploadDir = "user-photos/" + request.getUserId();
+//            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+            String fileName = imageService.save(multipartFile);
+            String imageUrl = imageService.getImageUrl(fileName);
+            request.setUrlImage(imageUrl);
+            request.setNameImage(nameImage);
         }
+        return ResponseEntity.ok(userService.updateUser(request));
+
     }
+    // upload many image
+    /*@PostMapping(value = "/update-info-user", consumes = { "multipart/form-data" })
+    public ResponseEntity<DataResponse> updateInfoUser(@RequestPart("data") UpdateUserRequest request,
+                                                       @RequestParam("avatar") MultipartFile[] multipartFile) throws IOException {
+        for (MultipartFile file : multipartFile) {
+            try {
+                String fileName = imageService.save(file);
+                String imageUrl = imageService.getImageUrl(fileName);
+                // do whatever you want with that
+            } catch (Exception e) {
+                //  throw internal error;
+            }
+        }
+    }*/
 
     @PostMapping("/change-password")
     public ResponseEntity<DataResponse> changePassword(@RequestBody ChangePWRequest request) {
@@ -80,14 +97,9 @@ public class UserController {
         return ResponseEntity.ok(userService.findAllUser());
     }
 
-    @PostMapping ("/disable-user")
-    public ResponseEntity<DataResponse> deleteListUser(@RequestBody DeleteIDsRequest request) {
-        return ResponseEntity.ok(userService.disableStatusUser(request));
-    }
-
-    @PostMapping("/active-user")
-    public ResponseEntity<DataResponse> activeListUser(@RequestBody DeleteIDsRequest request) {
-        return ResponseEntity.ok(userService.activeStatusUser(request));
+    @PostMapping("/change-status-user")
+    public ResponseEntity<DataResponse> changeStatusUser(@RequestBody DeleteIDsRequest request) {
+        return ResponseEntity.ok(userService.changeStatusUser(request));
     }
 
 }

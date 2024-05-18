@@ -24,8 +24,13 @@ public class Product implements Serializable {
     @Column(name = "product_price", nullable = false)
     private double productPrice;
 
+    // name image
     @Column(name = "product_images")
     private String productImages;
+
+    // url image
+    @Column(name = "url_image")
+    private String urlImage;
 
     @Column(name = "product_quantity", nullable = false)
     private int productQuantity;

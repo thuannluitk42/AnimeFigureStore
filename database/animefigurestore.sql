@@ -96,6 +96,11 @@ CREATE TABLE `users_roles` (
                                PRIMARY KEY (`user_id`,`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+ALTER TABLE animefigurestore.users ADD `is_Logged` tinyint(1) DEFAULT NULL;
+ALTER TABLE animefigurestore.users ADD `url_image` TEXT DEFAULT NULL;
+ALTER TABLE animefigurestore.products ADD `url_image` TEXT DEFAULT NULL;
+
 INSERT INTO animefigurestore.categories (category_name,is_deleted,created_date) VALUES
                                                                                     ('Honkai Impact 3',0,'2024-05-13 13:19:12'),
                                                                                     ('Honkai Star Rail',0,'2024-05-13 13:20:52'),
