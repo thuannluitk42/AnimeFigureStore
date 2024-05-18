@@ -36,13 +36,8 @@ public class ProductController {
             request.setImages(fileName);
             String uploadDir = "product-photos/";
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-
-            return ResponseEntity.ok(productService.insertNewProduct(request));
-
-        } else {
-
-            return ResponseEntity.ok(productService.insertNewProduct(request));
         }
+        return ResponseEntity.ok(productService.insertNewProduct(request));
     }
 
     @PostMapping(value = "/update-info-product", consumes = { "multipart/form-data" })
@@ -54,10 +49,9 @@ public class ProductController {
             request.setImages(fileName);
             String uploadDir = "product-photos/";
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-            return ResponseEntity.ok(productService.updateProduct(request));
-        } else {
-            return ResponseEntity.ok(productService.updateProduct(request));
+
         }
+        return ResponseEntity.ok(productService.updateProduct(request));
     }
     @GetMapping("/search-product")
     public ResponseEntity<DataResponse> getProductAll(@RequestBody SearchRequest searchRequest) {
