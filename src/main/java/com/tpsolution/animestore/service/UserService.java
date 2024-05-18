@@ -176,7 +176,6 @@ public class UserService implements UserServiceImp {
                     users.setAvatar(users.getAvatar());
                 }
 
-                users.setDeleted(false);
                 users.setRoles(setRolesRequest);
 
                 Date date = new Date();
@@ -224,6 +223,7 @@ public class UserService implements UserServiceImp {
     }
 
     @Override
+    @Transactional
     public DataResponse requestResetPW(String email) {
         logger.info("#resetRequestPW email: {}", email);
         Users userEntity = usersRepository.findUsersByEmailAndIsDelete(email, Boolean.FALSE);
@@ -243,6 +243,7 @@ public class UserService implements UserServiceImp {
     }
 
     @Override
+    @Transactional
     public DataResponse resetPassword(String token, String password, String confirmPassword) {
         logger.info("#resetPassword");
         Users userEntity = usersRepository.findByPasswordResetToken(token);
@@ -313,6 +314,7 @@ public class UserService implements UserServiceImp {
     }
 
     @Override
+    @Transactional
     public DataResponse disableStatusUser(DeleteIDsRequest request) {
         logger.info("#disableStatusUser");
         List<Users> usersChange = new ArrayList<>();
@@ -326,6 +328,26 @@ public class UserService implements UserServiceImp {
             usersChange.add(userEntity);
         }
 
+        Iterable<Users> entities =  usersRepository.saveAll(usersChange);
+
+        return DataResponse.ok(entities);
+
+    }
+
+    @Override
+    @Transactional
+    public DataResponse activeStatusUser(DeleteIDsRequest request) {
+        logger.info("#activeStatusUser");
+        List<Users> usersChange = new ArrayList<>();
+
+        for (Integer item:request.getList()) {
+            Users userEntity = usersRepository.getUsersByUserId(item);
+            if (null == userEntity) {
+                throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+            }
+            userEntity.setDeleted(Boolean.FALSE);
+            usersChange.add(userEntity);
+        }
 
         Iterable<Users> entities =  usersRepository.saveAll(usersChange);
 

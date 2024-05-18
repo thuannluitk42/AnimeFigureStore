@@ -79,9 +79,14 @@ public class UserController {
         return ResponseEntity.ok(userService.findAllUser());
     }
 
-    @DeleteMapping("/delete-user")
-    public ResponseEntity<DataResponse> deleteUser(@RequestBody DeleteIDsRequest request) {
+    @PostMapping ("/disable-user")
+    public ResponseEntity<DataResponse> deleteListUser(@RequestBody DeleteIDsRequest request) {
         return ResponseEntity.ok(userService.disableStatusUser(request));
+    }
+
+    @PostMapping("/active-user")
+    public ResponseEntity<DataResponse> activeListUser(@RequestBody DeleteIDsRequest request) {
+        return ResponseEntity.ok(userService.activeStatusUser(request));
     }
 
 }
