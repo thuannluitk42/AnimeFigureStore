@@ -313,48 +313,6 @@ public class UserService implements UserServiceImp {
         return DataResponse.ok(list);
     }
 
-    @Override
-    @Transactional
-    public DataResponse disableStatusUser(DeleteIDsRequest request) {
-        logger.info("#disableStatusUser");
-        List<Users> usersChange = new ArrayList<>();
-
-        for (Integer item:request.getList()) {
-            Users userEntity = usersRepository.getUsersByUserId(item);
-            if (null == userEntity) {
-                throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
-            }
-            userEntity.setDeleted(Boolean.TRUE);
-            usersChange.add(userEntity);
-        }
-
-        Iterable<Users> entities =  usersRepository.saveAll(usersChange);
-
-        return DataResponse.ok(entities);
-
-    }
-
-    @Override
-    @Transactional
-    public DataResponse activeStatusUser(DeleteIDsRequest request) {
-        logger.info("#activeStatusUser");
-        List<Users> usersChange = new ArrayList<>();
-
-        for (Integer item:request.getList()) {
-            Users userEntity = usersRepository.getUsersByUserId(item);
-            if (null == userEntity) {
-                throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
-            }
-            userEntity.setDeleted(Boolean.FALSE);
-            usersChange.add(userEntity);
-        }
-
-        Iterable<Users> entities =  usersRepository.saveAll(usersChange);
-
-        return DataResponse.ok(entities);
-
-    }
-
     public UserDetailResponse build(Users users) {
         UserDetailResponse userDetailResponse = new UserDetailResponse();
 
@@ -388,6 +346,45 @@ public class UserService implements UserServiceImp {
             spec = spec.and(withClientSearch(search));
         }
         return spec;
+    }
+
+    @Override
+    @Transactional
+    public DataResponse changeStatusUser(DeleteIDsRequest request) {
+        logger.info("#changeStatusUser");
+
+        if (request.getList().isEmpty()) {
+            return DataResponse.ok("");
+        }
+
+        List<Users> usersChange = new ArrayList<>();
+
+        for (Integer item:request.getList()) {
+
+            if (!CommonUtils.isNumeric(String.valueOf(item))) {
+                throw new BadRequestException(ErrorMessage.USER_ID_IS_INVALID);
+            }
+
+            Users userEntity = usersRepository.getUsersByUserId(item);
+
+            if (null == userEntity) {
+                throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+            }
+
+            boolean isStatus = userEntity.isDeleted();
+
+            if (isStatus == Boolean.TRUE) {
+                userEntity.setDeleted(Boolean.FALSE);
+            } else {
+                userEntity.setDeleted(Boolean.TRUE);
+            }
+
+            usersChange.add(userEntity);
+        }
+
+        Iterable<Users> entities =  usersRepository.saveAll(usersChange);
+
+        return DataResponse.ok("");
     }
 
 }
