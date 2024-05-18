@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,9 +15,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -51,8 +49,6 @@ public class CustomFilterSecurity {
     // Configuring HttpSecurity
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        HeaderWriterLogoutHandler clearSiteData = new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter());
-
 //        return http.csrf(csrf -> csrf.disable())
 //                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/welcome", "/auth/generateToken","/auth/test-request").permitAll())
 //                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/user/**").authenticated())
@@ -65,9 +61,20 @@ public class CustomFilterSecurity {
         http
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .httpBasic(withDefaults())
-                .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll())
+                //.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
-                .logout((logout) -> logout.addLogoutHandler(clearSiteData));
+                .formLogin(Customizer.withDefaults())
+                .logout(logout -> logout
+                        .logoutUrl("/auth/logout")
+                        .deleteCookies("JSESSIONID")
+                        .clearAuthentication(true)
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                response.sendRedirect("FRONTEND_BASE_URL")
+                        )
+                )
+                .rememberMe(rememberme -> rememberme
+                        .tokenValiditySeconds(7 * 24 * 60 * 60)
+                        .key("AbcdefghiJklmNoPqRstUvXyz"));
         return http.build();
     }
 
