@@ -5,6 +5,7 @@ import com.tpsolution.animestore.payload.DataResponse;
 import com.tpsolution.animestore.payload.SearchRequest;
 import com.tpsolution.animestore.payload.UpdateCategoryRequest;
 import com.tpsolution.animestore.service.CategoryService;
+import com.tpsolution.animestore.service.imp.CategoryServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ import java.io.IOException;
 public class CategoryController {
 
     @Autowired
-    CategoryService categoryService;
+    CategoryServiceImp categoryService;
 
     @GetMapping("/get-info-category/{categoryId}")
     public ResponseEntity<DataResponse> getInfoDetailCategory(@PathVariable String categoryId) {
