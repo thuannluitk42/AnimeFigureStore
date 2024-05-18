@@ -26,7 +26,6 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
     @GetMapping("/test-request")
     public ResponseEntity<String> testPostRequest() {
         return ResponseEntity.ok("GET request successful");
@@ -42,7 +41,7 @@ public class AuthenticationController {
         if(loginServiceImp.checkLogin(username,password)){
             String token = jwtUtilsHelper.generateToken(username);
             responseData.setData(token);
-        }else{
+        } else {
             responseData.setData("");
             responseData.setSuccess(false);
         }

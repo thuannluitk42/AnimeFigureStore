@@ -1,10 +1,8 @@
 package com.tpsolution.animestore.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class OrderDetailDTO {
     private int productId;
     private int amount;

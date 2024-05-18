@@ -4,7 +4,6 @@ import com.tpsolution.animestore.payload.AddCategoryRequest;
 import com.tpsolution.animestore.payload.DataResponse;
 import com.tpsolution.animestore.payload.SearchRequest;
 import com.tpsolution.animestore.payload.UpdateCategoryRequest;
-import com.tpsolution.animestore.service.CategoryService;
 import com.tpsolution.animestore.service.imp.CategoryServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -2,7 +2,6 @@ package com.tpsolution.animestore.controller;
 
 import com.tpsolution.animestore.payload.DataResponse;
 import com.tpsolution.animestore.payload.SearchRequest;
-import com.tpsolution.animestore.service.ProductService;
 import com.tpsolution.animestore.service.imp.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
