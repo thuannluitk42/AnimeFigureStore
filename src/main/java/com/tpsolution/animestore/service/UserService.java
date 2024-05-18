@@ -1,6 +1,7 @@
 package com.tpsolution.animestore.service;
 
 import com.tpsolution.animestore.constant.ErrorMessage;
+import com.tpsolution.animestore.dto.Provider;
 import com.tpsolution.animestore.entity.Roles;
 import com.tpsolution.animestore.entity.Users;
 import com.tpsolution.animestore.exception.BadRequestException;
@@ -89,6 +90,8 @@ public class UserService implements UserServiceImp {
                 users.setPhonenumber("0983172229");
                 users.setDob("23/03/1990");
                 users.setAvatar("default_avatar.jpg");
+                users.setLogged(Boolean.TRUE);
+                users.setProvider(Provider.LOCAL);
 
                 users.setDeleted(false);
                 users.setRoles(setRolesRequest);

@@ -1,5 +1,6 @@
 package com.tpsolution.animestore.entity;
 
+import com.tpsolution.animestore.dto.Provider;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,8 +52,14 @@ public class Users implements Serializable {
     @Column(name = "is_deleted",nullable = true)
     private boolean isDeleted;
 
+    @Column(name = "is_Logged",nullable = true)
+    private boolean isLogged;
+
     @Column(name = "created_date",nullable = true)
     private Date createdDate;
+
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

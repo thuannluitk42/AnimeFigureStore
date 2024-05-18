@@ -2,6 +2,7 @@ package com.tpsolution.animestore.controller;
 
 import com.tpsolution.animestore.payload.*;
 import com.tpsolution.animestore.service.UserService;
+import com.tpsolution.animestore.service.imp.UserServiceImp;
 import com.tpsolution.animestore.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import static com.tpsolution.animestore.utils.CommonUtils.randomIdentifier;
 public class UserController {
 
     @Autowired
-    UserService userService;
+    UserServiceImp userService;
 
     @GetMapping("/get-info-user/{userId}")
     public ResponseEntity<DataResponse> getInfoDetailUser(@PathVariable String userId) {

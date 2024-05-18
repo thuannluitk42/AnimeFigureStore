@@ -4,10 +4,9 @@ import com.tpsolution.animestore.payload.AddProductRequest;
 import com.tpsolution.animestore.payload.DataResponse;
 import com.tpsolution.animestore.payload.SearchRequest;
 import com.tpsolution.animestore.payload.UpdateProductRequest;
-import com.tpsolution.animestore.service.ProductService;
+import com.tpsolution.animestore.service.imp.ProductServiceImp;
 import com.tpsolution.animestore.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,7 @@ import java.io.IOException;
 public class ProductController {
 
     @Autowired
-    ProductService productService;
+    ProductServiceImp productService;
     @GetMapping("/get-info-product/{productId}")
     public ResponseEntity<DataResponse> getInfoDetailProduct(@PathVariable String productId) {
         return ResponseEntity.ok().body(productService.getInfoDetailProduct(productId));

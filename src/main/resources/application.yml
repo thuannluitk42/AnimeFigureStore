@@ -32,6 +32,19 @@ spring:
       enabled: true
       # Threshold after which files are written to disk.
       file-size-threshold: 2KB
+# Google
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 18086882798-q7p0434tqev7pnq32o0lpmkeu9koc468.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            scope:
+              - email
+              - profile
+              - openid
 jwt:
   privateKey: s30AjBawg1JBD92Gab5t8UDzl/+WSSug1VmLErKG8JA=
 #fileUpload:
@@ -46,4 +59,6 @@ mvc:
 firebase:
   image-url: https://storage.googleapis.com/storemanagement-62866.appspot.com/animefigurestore/%s
 
-
+logging:
+  level:
+    org.springframework.security: DEBUG

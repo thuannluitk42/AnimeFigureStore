@@ -82,6 +82,7 @@ CREATE TABLE `users` (
                          `dob` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
                          `avatar` text,
                          `is_deleted` tinyint(1) DEFAULT NULL,
+                         `is_Logged` tinyint(1) DEFAULT NULL,
                          `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
                          `token` varchar(255) DEFAULT NULL,
                          PRIMARY KEY (`user_id`)
@@ -95,6 +96,9 @@ CREATE TABLE `users_roles` (
                                `role_id` int NOT NULL,
                                PRIMARY KEY (`user_id`,`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+ALTER TABLE animefigurestore.users ADD `is_Logged` tinyint(1) DEFAULT NULL;
 
 INSERT INTO animefigurestore.categories (category_name,is_deleted,created_date) VALUES
                                                                                     ('Honkai Impact 3',0,'2024-05-13 13:19:12'),

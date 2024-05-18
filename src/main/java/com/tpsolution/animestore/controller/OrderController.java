@@ -6,7 +6,7 @@ import com.tpsolution.animestore.entity.Product;
 import com.tpsolution.animestore.payload.*;
 import com.tpsolution.animestore.repository.OrderDetailRepository;
 import com.tpsolution.animestore.repository.ProductRepository;
-import com.tpsolution.animestore.service.OrderService;
+import com.tpsolution.animestore.service.imp.OrderServiceImp;
 import com.tpsolution.animestore.utils.ExcelGenerator;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import java.util.List;
 public class OrderController {
 
     @Autowired
-    OrderService orderService;
+    OrderServiceImp orderService;
 
     @Autowired
     OrderDetailRepository orderDetailRepository;

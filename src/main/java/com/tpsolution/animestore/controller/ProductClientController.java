@@ -3,6 +3,7 @@ package com.tpsolution.animestore.controller;
 import com.tpsolution.animestore.payload.DataResponse;
 import com.tpsolution.animestore.payload.SearchRequest;
 import com.tpsolution.animestore.service.ProductService;
+import com.tpsolution.animestore.service.imp.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductClientController {
 
     @Autowired
-    ProductService productService;
+    ProductServiceImp productService;
 
     @GetMapping("/get-info-product/{productId}")
     public ResponseEntity<DataResponse> getInfoDetailProduct(@PathVariable String productId) {

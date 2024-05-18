@@ -4,7 +4,6 @@ import com.tpsolution.animestore.payload.AuthRequest;
 import com.tpsolution.animestore.payload.ResponseData;
 import com.tpsolution.animestore.security.JwtUtilsHelper;
 import com.tpsolution.animestore.service.imp.LoginServiceImp;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +25,28 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @GetMapping("/logout")
+    public ResponseEntity<String> testLogoutRequest() {
+        return ResponseEntity.ok("logout successful");
+    }
 
     @GetMapping("/test-request")
     public ResponseEntity<String> testPostRequest() {
-        return ResponseEntity.ok("GET request successful");
+        return ResponseEntity.ok("post request successful");
     }
 
+    @GetMapping("/login-success")
+    public ResponseEntity<String> testLoginSuccess() {
+        return ResponseEntity.ok("testLoginSuccess");
+    }
+    @GetMapping("/login-failed")
+    public ResponseEntity<String> testLoginFailed() {
+        return ResponseEntity.ok("testLoginFailed");
+    }
+    @GetMapping("/logout-success")
+    public ResponseEntity<String> testLogoutSuccess() {
+        return ResponseEntity.ok("testLogoutSuccess");
+    }
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestParam String username, @RequestParam String password){
         ResponseData responseData = new ResponseData();
@@ -60,10 +75,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        return loginServiceImp.logout(request);
-    }
+
 
     @GetMapping("/user/userProfile")
     @PreAuthorize("hasAuthority('client')")
