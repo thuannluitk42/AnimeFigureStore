@@ -7,7 +7,6 @@ import com.tpsolution.animestore.payload.UpdateProductRequest;
 import com.tpsolution.animestore.service.ProductService;
 import com.tpsolution.animestore.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;

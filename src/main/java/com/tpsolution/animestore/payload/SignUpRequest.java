@@ -1,13 +1,10 @@
 package com.tpsolution.animestore.payload;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-import java.util.List;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 public class SignUpRequest {
     private String fullName;
     private String email;

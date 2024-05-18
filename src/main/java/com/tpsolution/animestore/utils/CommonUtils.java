@@ -1,6 +1,5 @@
 package com.tpsolution.animestore.utils;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -90,7 +89,6 @@ public class CommonUtils {
     }
 
     public static boolean isNumeric(String str) {
-        // Using regular expression to check if the string contains only numeric characters
-        return str.matches("-?\\d+(\\.\\d+)?"); // Matches integers or decimals
+        return str.matches("-?\\d+(\\.\\d+)?");
     }
 }
