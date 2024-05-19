@@ -24,5 +24,7 @@ public interface UsersRepository extends CrudRepository<Users, UUID>, JpaSpecifi
     Users findByPasswordResetToken(String token);
 
     Users getUsersByUserId(int userId);
+
+    Optional<Users> findByEmail(String email);
 }
 

@@ -97,7 +97,7 @@ CREATE TABLE `users_roles` (
                                PRIMARY KEY (`user_id`,`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
+ALTER TABLE animefigurestore.users ADD COLUMN `oauth2_id` TEXT NULL DEFAULT NULL ;
 ALTER TABLE animefigurestore.users ADD `is_Logged` tinyint(1) DEFAULT NULL;
 
 INSERT INTO animefigurestore.categories (category_name,is_deleted,created_date) VALUES

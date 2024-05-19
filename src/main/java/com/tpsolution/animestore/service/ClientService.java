@@ -1,7 +1,7 @@
 package com.tpsolution.animestore.service;
 
 import com.tpsolution.animestore.constant.ErrorMessage;
-import com.tpsolution.animestore.dto.Provider;
+import com.tpsolution.animestore.enums.Provider;
 import com.tpsolution.animestore.entity.Roles;
 import com.tpsolution.animestore.entity.Users;
 import com.tpsolution.animestore.exception.BadRequestException;

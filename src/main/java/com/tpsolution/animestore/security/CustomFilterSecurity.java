@@ -1,6 +1,8 @@
 package com.tpsolution.animestore.security;
 
-import com.tpsolution.animestore.payload.AddUserRequest;
+import com.tpsolution.animestore.entity.Users;
+import com.tpsolution.animestore.repository.UsersRepository;
+import com.tpsolution.animestore.security.oauth2.CustomOAuth2UserService;
 import com.tpsolution.animestore.service.imp.ClientServiceImp;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,16 +14,18 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -29,9 +33,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
@@ -46,15 +48,21 @@ public class CustomFilterSecurity {
     CustomJwtFilter customJwtFilter;
 
     @Autowired
+    private JwtUtilsHelper jwtTokenProvider;
+
+    @Autowired
     CustomOAuth2UserService oauthUserService;
 
     @Autowired
     ClientServiceImp userService;
 
+    @Autowired
+    UsersRepository usersRepository;
+
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000/"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST"));
+        corsConfiguration.setAllowedOrigins(List.of("/**"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(3600L);
@@ -66,46 +74,52 @@ public class CustomFilterSecurity {
     // Configuring HttpSecurity
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-         http.csrf(csrf -> csrf.disable())
-                 .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/welcome", "/auth/generateToken","/auth/test-request","/auth/logout","/login**","/callback/", "/oauth2/authorization/**","/auth/logout-success","/auth/login-success").permitAll())
-                 .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/user/**").authenticated())
-                 .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/admin/**").authenticated())
-                 .oauth2Login(oauth2LoginCustomizer -> oauth2LoginCustomizer
-                         .userInfoEndpoint(userInfoEndpointCustomizer -> userInfoEndpointCustomizer.userService(oauthUserService))
-                         .successHandler(new AuthenticationSuccessHandler() {
-                             @Override
-                             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                                 DefaultOidcUser defaultOidcUser = (DefaultOidcUser) authentication.getPrincipal();
+        //httpBasic, csrf, formLogin, rememberMe, logout, session disable
+        http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
+            .httpBasic(Customizer.withDefaults())
+            .csrf(csrf -> csrf.disable())
+            .formLogin(frmLogin -> frmLogin.disable())
+            .rememberMe(rmMe -> rmMe.disable())
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        //Set permissions for requests
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/welcome", "/auth/generateToken","/auth/test-request","/auth/logout", "/oauth2/authorization/**","/auth/logout-success","/auth/login-success").permitAll())
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/user/**").authenticated())
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/product/**").authenticated())
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/category/**").authenticated())
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/admin/**").authenticated())
+        //oauth2Login
+            .oauth2Login(oauth2LoginCustomizer -> oauth2LoginCustomizer
+                .userInfoEndpoint(userInfoEndpointCustomizer -> userInfoEndpointCustomizer.userService(oauthUserService))
+                    .successHandler(new AuthenticationSuccessHandler() {
+                        @Override
+                        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-                                 AddUserRequest req = getAddUserRequest(defaultOidcUser);
-                                 userService.insertNewClient(req);
+                            UserInfoDetails userInfoDetails = (UserInfoDetails) authentication.getPrincipal();
 
-                                 // Redirect to a success page after user creation
-                                 response.sendRedirect("/auth/login-success");
-                             }
-                         })
-                 )
-                 .logout((logout) -> logout.logoutSuccessUrl("/auth/logout-success"))
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(customJwtFilter, UsernamePasswordAuthenticationFilter.class);
-//        http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
-//                .httpBasic(withDefaults())
-//                .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll())
-//                .csrf(AbstractHttpConfigurer::disable);
+                            //Generate JWT
+                            String tokenInfo = jwtTokenProvider.generateToken(userInfoDetails.getUsername());
+                            Users u = usersRepository.findUsersByEmailAndIsDelete(userInfoDetails.getUsername(),Boolean.FALSE);
+                            u.setToken(tokenInfo);
+                            usersRepository.save(u);
+                            
+                            //Redirect to a success page after user creation
+                            response.sendRedirect("/auth/login-success");
+
+                        }
+
+                    })
+                .failureHandler(new AuthenticationFailureHandler() {
+                    @Override
+                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                        response.sendRedirect("/auth/login-failed");
+                    }
+                })
+            );
+        http.logout(logoutConfig -> logoutConfig.clearAuthentication(true).deleteCookies("JSESSIONID"));
+        //jwt filter settings
+        http.authenticationProvider(authenticationProvider()).addFilterBefore(customJwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
-    private static AddUserRequest getAddUserRequest(DefaultOidcUser defaultOidcUser) {
-        AddUserRequest req = new AddUserRequest();
-        Set<Integer> roleId = new HashSet<>();
-        roleId.add(6);
-        req.setRoleId(roleId);
-        req.setEmail(defaultOidcUser.getEmail());
-        req.setPassword("Ab123456@");
-        return req;
-    }
-
 
     // Password Encoding
     @Bean

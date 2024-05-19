@@ -1,4 +1,4 @@
-package com.tpsolution.animestore.security;
+package com.tpsolution.animestore.security.oauth2;
 
 import java.util.Collection;
 import java.util.Map;

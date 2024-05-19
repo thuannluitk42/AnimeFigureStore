@@ -1,11 +1,9 @@
 package com.tpsolution.animestore.entity;
 
-import com.tpsolution.animestore.dto.Provider;
+import com.tpsolution.animestore.enums.Provider;
+import com.tpsolution.animestore.security.oauth2.OAuth2UserInfo;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -19,6 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
+@Builder
 public class Users implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +59,9 @@ public class Users implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private Provider provider;
+
+    @Column(name = "oauth2_id",nullable = true)
+    private String oauth2Id;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -109,6 +111,12 @@ public class Users implements Serializable {
         if (avatar == null) return null;
 
         return "/user-photos/" + userId + "/" + avatar;
+    }
+
+    public Users update(OAuth2UserInfo oAuth2UserInfo) {
+        this.username = oAuth2UserInfo.getName();
+        this.oauth2Id = oAuth2UserInfo.getOAuth2Id();
+        return this;
     }
 
 }

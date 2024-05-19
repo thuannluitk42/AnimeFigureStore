@@ -40,11 +40,10 @@ spring:
           google:
             client-id: 18086882798-q7p0434tqev7pnq32o0lpmkeu9koc468.apps.googleusercontent.com
             client-secret: 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
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
             scope:
               - email
               - profile
-              - openid
+#            redirect-uri: http://localhost:8080/login/oauth2/code/google
 jwt:
   privateKey: s30AjBawg1JBD92Gab5t8UDzl/+WSSug1VmLErKG8JA=
 #fileUpload:
@@ -62,3 +61,8 @@ firebase:
 logging:
   level:
     org.springframework.security: DEBUG
+
+server:
+  tomcat:
+    relaxed-path-chars: <,>,[,\,],^,`,{,|,},
+    relaxed-query-chars: <,>,[,\,],^,`,{,|,},

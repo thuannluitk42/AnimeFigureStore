@@ -1,4 +1,4 @@
-package com.tpsolution.animestore.dto;
+package com.tpsolution.animestore.enums;
 
 public enum Provider {
     LOCAL, GOOGLE
