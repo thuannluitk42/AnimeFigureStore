@@ -1,6 +1,5 @@
 package com.tpsolution.animestore.payload;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tpsolution.animestore.constant.ErrorCode;
 import lombok.AllArgsConstructor;

@@ -1,9 +1,9 @@
 package com.tpsolution.animestore.payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
-
-import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

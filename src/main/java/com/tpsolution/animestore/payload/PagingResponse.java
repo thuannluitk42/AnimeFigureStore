@@ -1,10 +1,8 @@
 package com.tpsolution.animestore.payload;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class PagingResponse {
     private int totalPage;
     private int currentPage;

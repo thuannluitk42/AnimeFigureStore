@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,12 +26,27 @@ public class AuthenticationController {
     JwtUtilsHelper jwtUtilsHelper;
     @Autowired
     private AuthenticationManager authenticationManager;
+  
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout() {
+//        SecurityContextHolder.clearContext();
+//        return ResponseEntity.ok().build();
+//    }
 
+//    @GetMapping("/login")
+//    public ResponseEntity<String> showLoginForm() {
+//
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+//            return ResponseEntity.ok("login");
+//        }
+//
+//        return ResponseEntity.ok("redirect:///");
+//    }
     @GetMapping("/logout")
     public ResponseEntity<String> testLogoutRequest() {
         return ResponseEntity.ok("logout successful");
     }
-
     @GetMapping("/test-request")
     public ResponseEntity<String> testPostRequest() {
         return ResponseEntity.ok("post request successful");
@@ -57,7 +74,7 @@ public class AuthenticationController {
         if(loginServiceImp.checkLogin(username,password)){
             String token = jwtUtilsHelper.generateToken(username);
             responseData.setData(token);
-        }else{
+        } else {
             responseData.setData("");
             responseData.setSuccess(false);
         }

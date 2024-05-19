@@ -11,8 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -105,12 +104,13 @@ public class Users implements Serializable {
         return roleName;
     }
 
-
     @Transient
     public String getPhotosImagePath() {
-        if (avatar == null) return null;
-
-        return "/user-photos/" + userId + "/" + avatar;
+        if (avatar == null) {
+            return "/user-photos/default_avatar.jpg";
+        } else {
+            return "/user-photos/" + userId + "/" + avatar;
+        }
     }
 
     public Users update(OAuth2UserInfo oAuth2UserInfo) {

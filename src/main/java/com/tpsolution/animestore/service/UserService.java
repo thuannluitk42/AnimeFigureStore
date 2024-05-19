@@ -61,11 +61,11 @@ public class UserService implements UserServiceImp {
         logger.info("#insertNewUser email: {}", request.getEmail());
 
         Set<Roles> setRolesRequest = new HashSet<>();
-            if (StringUtils.hasText(request.getEmail()) == true && !CommonUtils.checkEmail(request.getEmail())) {
+            if (StringUtils.hasText(request.getEmail()) && !CommonUtils.checkEmail(request.getEmail())) {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
 
-            if (StringUtils.hasText(request.getEmail()) == false) {
+            if (!StringUtils.hasText(request.getEmail())) {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
 
@@ -106,8 +106,7 @@ public class UserService implements UserServiceImp {
                 throw new BadRequestException(ErrorMessage.USER_IS_EXISTED);
             }
 
-
-        return DataResponse.ok(users);
+        return DataResponse.ok(null);
     }
 
     @Override
@@ -116,11 +115,11 @@ public class UserService implements UserServiceImp {
         logger.info("#updateUser email: {}", request.getEmail());
         Users users;
         Set<Roles> setRolesRequest = new HashSet<>();
-            if (StringUtils.hasText(request.getEmail()) == true && !CommonUtils.checkEmail(request.getEmail())) {
+            if (StringUtils.hasText(request.getEmail()) && !CommonUtils.checkEmail(request.getEmail())) {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
 
-            if (StringUtils.hasText(request.getEmail()) == false) {
+            if (!StringUtils.hasText(request.getEmail())) {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
 
@@ -179,7 +178,6 @@ public class UserService implements UserServiceImp {
                     users.setAvatar(users.getAvatar());
                 }
 
-                users.setDeleted(false);
                 users.setRoles(setRolesRequest);
 
                 Date date = new Date();
@@ -189,19 +187,18 @@ public class UserService implements UserServiceImp {
 
             }
 
-
-        return DataResponse.ok(users);
+        return DataResponse.ok(null);
     }
 
     @Override
     @Transactional
     public DataResponse changePW(ChangePWRequest request) {
         logger.info("#changePW email: {}", request.getEmail());
-            if (StringUtils.hasText(request.getEmail()) == true && !CommonUtils.checkEmail(request.getEmail())) {
+            if (StringUtils.hasText(request.getEmail()) && !CommonUtils.checkEmail(request.getEmail())) {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
 
-            if (StringUtils.hasText(request.getEmail()) == false) {
+            if (!StringUtils.hasText(request.getEmail())) {
                 throw new BadRequestException(ErrorMessage.EMAIL_IS_INVALID);
             }
 
@@ -209,7 +206,6 @@ public class UserService implements UserServiceImp {
 
             if (users == null) {
                 throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
-
             } else {
 
                 if (!passwordEncoder.matches(request.getOldPassword(), users.getPassword())) {
@@ -227,6 +223,7 @@ public class UserService implements UserServiceImp {
     }
 
     @Override
+    @Transactional
     public DataResponse requestResetPW(String email) {
         logger.info("#resetRequestPW email: {}", email);
         Users userEntity = usersRepository.findUsersByEmailAndIsDelete(email, Boolean.FALSE);
@@ -246,6 +243,7 @@ public class UserService implements UserServiceImp {
     }
 
     @Override
+    @Transactional
     public DataResponse resetPassword(String token, String password, String confirmPassword) {
         logger.info("#resetPassword");
         Users userEntity = usersRepository.findByPasswordResetToken(token);
@@ -315,27 +313,6 @@ public class UserService implements UserServiceImp {
         return DataResponse.ok(list);
     }
 
-    @Override
-    public DataResponse disableStatusUser(DeleteIDsRequest request) {
-        logger.info("#disableStatusUser");
-        List<Users> usersChange = new ArrayList<>();
-
-        for (Integer item:request.getList()) {
-            Users userEntity = usersRepository.getUsersByUserId(item);
-            if (null == userEntity) {
-                throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
-            }
-            userEntity.setDeleted(Boolean.TRUE);
-            usersChange.add(userEntity);
-        }
-
-
-        Iterable<Users> entities =  usersRepository.saveAll(usersChange);
-
-        return DataResponse.ok(entities);
-
-    }
-
     public UserDetailResponse build(Users users) {
         UserDetailResponse userDetailResponse = new UserDetailResponse();
 
@@ -369,6 +346,45 @@ public class UserService implements UserServiceImp {
             spec = spec.and(withClientSearch(search));
         }
         return spec;
+    }
+
+    @Override
+    @Transactional
+    public DataResponse changeStatusUser(DeleteIDsRequest request) {
+        logger.info("#changeStatusUser");
+
+        if (request.getList().isEmpty()) {
+            return DataResponse.ok("");
+        }
+
+        List<Users> usersChange = new ArrayList<>();
+
+        for (Integer item:request.getList()) {
+
+            if (!CommonUtils.isNumeric(String.valueOf(item))) {
+                throw new BadRequestException(ErrorMessage.USER_ID_IS_INVALID);
+            }
+
+            Users userEntity = usersRepository.getUsersByUserId(item);
+
+            if (null == userEntity) {
+                throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+            }
+
+            boolean isStatus = userEntity.isDeleted();
+
+            if (isStatus == Boolean.TRUE) {
+                userEntity.setDeleted(Boolean.FALSE);
+            } else {
+                userEntity.setDeleted(Boolean.TRUE);
+            }
+
+            usersChange.add(userEntity);
+        }
+
+        Iterable<Users> entities =  usersRepository.saveAll(usersChange);
+
+        return DataResponse.ok(null);
     }
 
 }

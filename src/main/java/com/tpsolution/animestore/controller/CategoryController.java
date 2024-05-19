@@ -31,7 +31,6 @@ public class CategoryController {
     @PostMapping(value = "/update-info-category")
     public ResponseEntity<DataResponse> updateInfoUser(@RequestBody UpdateCategoryRequest request) throws IOException {
             return ResponseEntity.ok(categoryService.updateCategory(request));
-
     }
 
     @GetMapping("/search-category")

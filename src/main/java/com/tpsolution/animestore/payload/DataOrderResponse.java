@@ -1,15 +1,12 @@
 package com.tpsolution.animestore.payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tpsolution.animestore.entity.Users;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor

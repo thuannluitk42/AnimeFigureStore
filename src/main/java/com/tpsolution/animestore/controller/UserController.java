@@ -1,6 +1,7 @@
 package com.tpsolution.animestore.controller;
 
 import com.tpsolution.animestore.payload.*;
+
 import com.tpsolution.animestore.service.UserService;
 import com.tpsolution.animestore.service.imp.UserServiceImp;
 import com.tpsolution.animestore.utils.FileUploadUtil;
@@ -48,21 +49,14 @@ public class UserController {
     }
 
     @PostMapping(value = "/update-info-user", consumes = { "multipart/form-data" })
-    public ResponseEntity<DataResponse> updateInfoUser(@RequestPart("data") UpdateUserRequest request,
-                                                       @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
-
+    public ResponseEntity<DataResponse> updateInfoUser(@RequestPart("data") UpdateUserRequest request, @RequestParam("avatar") MultipartFile multipartFile) throws IOException {
         if (!multipartFile.isEmpty()) {
-
             String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
             request.setUrlImage(fileName);
             String uploadDir = "user-photos/" + request.getUserId();
             FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-
-            return ResponseEntity.ok(userService.updateUser(request));
-        } else {
-
-            return ResponseEntity.ok(userService.updateUser(request));
         }
+        return ResponseEntity.ok(userService.updateUser(request));
     }
 
     @PostMapping("/change-password")
@@ -80,9 +74,9 @@ public class UserController {
         return ResponseEntity.ok(userService.findAllUser());
     }
 
-    @DeleteMapping("/delete-user")
-    public ResponseEntity<DataResponse> deleteUser(@RequestBody DeleteIDsRequest request) {
-        return ResponseEntity.ok(userService.disableStatusUser(request));
+    @PostMapping("/change-status-user")
+    public ResponseEntity<DataResponse> changeStatusUser(@RequestBody DeleteIDsRequest request) {
+        return ResponseEntity.ok(userService.changeStatusUser(request));
     }
 
 }

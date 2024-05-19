@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DataOrderDetailResponse {
-    private String productName;
-    private int amount;
-    private double unitPrice;
-    private double subTotal;
+public class RoleDetailResponse {
+    private int roleId;
+    private String roleName;
 }

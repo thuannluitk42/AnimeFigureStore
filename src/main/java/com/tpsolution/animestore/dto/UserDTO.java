@@ -1,11 +1,10 @@
 package com.tpsolution.animestore.dto;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.Data;
 
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
 public class UserDTO {
     private int id;
     private String userName;
