@@ -1,9 +1,9 @@
 ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: jdbc:mysql://localhost:3306/animefigurestore?characterEncoding=UTF-8&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false
+    username: root
+    password: Abc12345@
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     # Show or not log for each sql query

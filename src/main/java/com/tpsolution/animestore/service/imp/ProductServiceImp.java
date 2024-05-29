@@ -3,9 +3,11 @@ package com.tpsolution.animestore.service.imp;
 import com.tpsolution.animestore.payload.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 public interface ProductServiceImp {
 
-    DataResponse insertNewProduct(AddProductRequest request, MultipartFile multipartFile);
+    DataResponse insertNewProduct(AddProductRequest request, MultipartFile multipartFile) throws IOException;
 
     DataResponse updateProduct(UpdateProductRequest request);
 

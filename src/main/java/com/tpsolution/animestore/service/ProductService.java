@@ -48,11 +48,10 @@ public class ProductService implements ProductServiceImp {
 
     @Override
     @Transactional
-    public DataResponse insertNewProduct(AddProductRequest request , MultipartFile multipartFile) {
+    public DataResponse insertNewProduct(AddProductRequest request , MultipartFile multipartFile) throws IOException {
         logger.info("#insertNewProduct productName: {}", request.getProduct_name());
         Product product = new Product();
 
-        try {
             if (StringUtils.hasText(request.getProduct_name()) && CommonUtils.containsSpecialCharacter(request.getProduct_name())) {
                 throw new BadRequestException(ErrorMessage.PRODUCT_NAME_IS_INVALID);
             }
@@ -77,7 +76,7 @@ public class ProductService implements ProductServiceImp {
                 throw new BadRequestException(ErrorMessage.PRODUCT_IMAGES_IS_INVALID);
             }
 
-            if (StringUtils.hasText(request.getUrlImage()) && CommonUtils.isImageFile(request.getUrlImage())) {
+            if (StringUtils.hasText(request.getUrlImage()) && !CommonUtils.isImageFile(request.getUrlImage())) {
                 throw new BadRequestException(ErrorMessage.PRODUCT_IMAGES_IS_INVALID);
             }
 
@@ -117,10 +116,6 @@ public class ProductService implements ProductServiceImp {
                 String uploadDir = "product-photos/"+product.getProductId();
                 FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
             }
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
 
         return DataResponse.ok(product);
     }
