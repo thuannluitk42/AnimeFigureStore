@@ -4,17 +4,12 @@ import com.tpsolution.animestore.payload.*;
 import com.tpsolution.animestore.service.imp.UserServiceImp;
 import com.tpsolution.animestore.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.tpsolution.animestore.utils.CommonUtils.randomIdentifier;
 
 @RestController
 @RequestMapping("/admin/user")

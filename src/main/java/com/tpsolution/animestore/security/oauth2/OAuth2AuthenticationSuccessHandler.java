@@ -4,8 +4,9 @@ import com.tpsolution.animestore.entity.Roles;
 import com.tpsolution.animestore.entity.Users;
 import com.tpsolution.animestore.enums.Provider;
 import com.tpsolution.animestore.repository.UsersRepository;
+import com.tpsolution.animestore.security.CustomJwtFilter;
+import com.tpsolution.animestore.security.JwtUtilsHelper;
 import com.tpsolution.animestore.service.imp.RoleServiceImp;
-import com.tpsolution.animestore.service.imp.UserServiceImp;
 import com.tpsolution.animestore.utils.CommonUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +31,7 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     private final UsersRepository userService;
     private final RoleServiceImp roleService;
+    private final JwtUtilsHelper jwtUtilsHelper;
 
     @Value("${frontend.url}")
     private String frontendUrl;
@@ -67,6 +69,10 @@ public class OAuth2AuthenticationSuccessHandler extends SavedRequestAwareAuthent
                         userEntity.setProvider(Provider.GOOGLE);
                         userEntity.setPassword("Abc12345@");
                         userEntity.setAvatar(avatar);
+
+                        String token = jwtUtilsHelper.generateToken(email);
+                        userEntity.setToken(token);
+
                         userService.save(userEntity);
 
                         DefaultOAuth2User newUser = new DefaultOAuth2User(listGrantedAuthority(userEntity),

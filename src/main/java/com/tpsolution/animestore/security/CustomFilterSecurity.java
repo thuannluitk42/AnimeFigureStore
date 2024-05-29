@@ -18,7 +18,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -39,11 +44,6 @@ public class CustomFilterSecurity {
     @Autowired
     CustomJwtFilter customJwtFilter;
 
-    @Autowired
-    private JwtUtilsHelper jwtTokenProvider;
-
-//    @Autowired
-//    CustomOAuth2UserService oauthUserService;
     @Autowired
     OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
@@ -70,15 +70,19 @@ public class CustomFilterSecurity {
 
     // Configuring HttpSecurity
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-/*        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> { auth.anyRequest().authenticated();})
-                .oauth2Login(oath2 -> {
-                    oath2.loginPage("http://localhost:3000/login").permitAll();
-                    oath2.successHandler(oAuth2AuthenticationSuccessHandler);
-                });*/
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+//        http
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                .authorizeHttpRequests(auth -> { auth.anyRequest().authenticated();})
+//                .oauth2Login(oath2 -> {
+//                    oath2.loginPage("http://localhost:3000/login").permitAll();
+//                    oath2.successHandler(oAuth2AuthenticationSuccessHandler);
+//                })
+//                .logout(logout -> logout
+//                        .logoutUrl("http://localhost:3000/logout")
+//                                .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
+//                );
         http
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .httpBasic(withDefaults())
@@ -86,6 +90,14 @@ public class CustomFilterSecurity {
                 .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
+    private LogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
+        OidcClientInitiatedServerLogoutSuccessHandler oidcLogoutSuccessHandler =
+                new OidcClientInitiatedServerLogoutSuccessHandler((ReactiveClientRegistrationRepository) clientRegistrationRepository);
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:3000/logged-out");
+
+        return (LogoutSuccessHandler) oidcLogoutSuccessHandler;
+    }
+
 
     // Password Encoding
     @Bean
@@ -105,26 +117,4 @@ public class CustomFilterSecurity {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-//    @Bean
-//    public ClientRegistrationRepository clientRegistrationRepository() {
-//        return new InMemoryClientRegistrationRepository(this.googleClientRegistration());
-//    }
-//
-//    private ClientRegistration googleClientRegistration() {
-//        return ClientRegistration.withRegistrationId("google")
-//                .clientId("18086882798-q7p0434tqev7pnq32o0lpmkeu9koc468.apps.googleusercontent.com")
-//                .clientSecret("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")
-//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-//                .redirectUri("http://localhost:8080/login/oauth2/code/google")
-//                .scope("openid", "profile", "email", "address", "phone")
-//                .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
-//                .tokenUri("https://www.googleapis.com/oauth2/v4/token")
-//                .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
-//                .userNameAttributeName(IdTokenClaimNames.SUB)
-//                .jwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
-//                .clientName("Google")
-//                .build();
-//    }
 }
