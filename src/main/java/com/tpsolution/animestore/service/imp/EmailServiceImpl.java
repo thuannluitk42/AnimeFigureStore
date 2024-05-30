@@ -6,8 +6,7 @@ import jakarta.mail.MessagingException;
 public interface EmailServiceImpl {
 
     String sendEmailNoAttachment(EmailDetails details);
-
     String sendEmailWithAttachment(EmailDetails details);
-    String sendHtmlEmail(EmailDetails details) throws MessagingException;
+    String sendEmailVerifyAccount(EmailDetails details) throws MessagingException;
 
 }

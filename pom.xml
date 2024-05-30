@@ -158,6 +158,12 @@
 			<version>3.1.5</version>
 		</dependency>
 
+		<!-- use for send email is a format html file -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -15,22 +15,21 @@ public class EmailController {
     @Autowired
     private EmailServiceImpl emailService;
 
-    @PostMapping("/sendMail")
+    @PostMapping("/send-mail")
     public String sendMail(@RequestBody EmailDetails details) {
         String status = emailService.sendEmailNoAttachment(details);
         return status;
     }
 
-    // Sending email with attachment
-    @PostMapping("/sendMailWithAttachment")
+    @PostMapping("/send-mail-with-attachment")
     public String sendMailWithAttachment(@RequestBody EmailDetails details) {
         String status = emailService.sendEmailWithAttachment(details);
         return status;
     }
 
-    @PostMapping("/sendHtmlEmailUseGG")
+    @PostMapping("/send-email-verify-account")
     public String sendHtmlEmailUseGG(@RequestBody EmailDetails details) throws MessagingException {
-        String status = emailService.sendHtmlEmail(details);
+        String status = emailService.sendEmailVerifyAccount(details);
         return status;
     }
 }
