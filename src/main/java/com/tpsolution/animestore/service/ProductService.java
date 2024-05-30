@@ -117,7 +117,7 @@ public class ProductService implements ProductServiceImp {
                 FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
             }
 
-        return DataResponse.ok(product);
+        return DataResponse.ok(product.getProductId());
     }
 
     @Override
@@ -176,7 +176,7 @@ public class ProductService implements ProductServiceImp {
 
                 product.setDeleted(false);
 
-                product = productRepository.save(product);
+                productRepository.save(product);
 
             }
 
@@ -184,7 +184,7 @@ public class ProductService implements ProductServiceImp {
             e.printStackTrace();
         }
 
-        return DataResponse.ok(product);
+        return DataResponse.ok("");
     }
 
     @Override
@@ -432,7 +432,7 @@ public class ProductService implements ProductServiceImp {
         productDetailResponse.setImages(product.getPhotosImagePath());
 
         CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setCategoryId(product.getCategory().getCategoryId());
+        categoryDTO.setCategoryId(List.of(product.getCategory().getCategoryId()));
         categoryDTO.setCategoryName(product.getCategory().getCategoryName());
         productDetailResponse.setCategoryDTO(categoryDTO);
 

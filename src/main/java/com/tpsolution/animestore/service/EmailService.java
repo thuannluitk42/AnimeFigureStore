@@ -88,7 +88,7 @@ public class EmailService implements EmailServiceImpl {
     public String sendEmailVerifyAccount(EmailDetails details) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper email = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-        String confirmationUrl = "generated_confirmation_url";
+        String confirmationUrl = "http://localhost:8080/client/generated_confirmation_url";
         try {
             email.setFrom(sender);
             email.setTo(details.getRecipient());

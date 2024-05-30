@@ -108,7 +108,7 @@ public class UserService implements UserServiceImp {
                 throw new BadRequestException(ErrorMessage.USER_IS_EXISTED);
             }
         UserDetailResponse userData = build(users);
-        return DataResponse.ok(userData);
+        return DataResponse.ok(userData.getUserId());
     }
 
     @Override
@@ -184,8 +184,8 @@ public class UserService implements UserServiceImp {
 
             }
 
-        UserDetailResponse userData = build(users);
-        return DataResponse.ok(userData);
+        build(users);
+        return DataResponse.ok("");
     }
 
     @Override

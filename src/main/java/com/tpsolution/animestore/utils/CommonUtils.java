@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 public class CommonUtils {
 
+    private static final String regex = "[^a-zA-Z0-9\\sáàảãạăắằẳẵặâấầẩẫậđéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]";
+
     public static boolean patternMatches(String emailAddress, String regexPattern) {
         return Pattern.compile(regexPattern)
                 .matcher(emailAddress)
@@ -58,9 +60,14 @@ public class CommonUtils {
     }
 
     public static boolean containsSpecialCharacter(String str) {
-        Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
+        Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(str);
-        return matcher.find();
+        // check if contains special character return true
+        if (matcher.find()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static boolean isImageFile(String fileName) {
