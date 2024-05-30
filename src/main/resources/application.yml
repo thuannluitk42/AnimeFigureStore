@@ -2,8 +2,10 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/animefigurestore?characterEncoding=UTF-8&createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+#    username: ${SPRING_DATASOURCE_USERNAME}
+#    password: ${SPRING_DATASOURCE_PASSWORD}
+    username: root
+    password: Abc12345@
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     # Show or not log for each sql query
@@ -55,6 +57,26 @@ spring:
             scope:
               - email
               - public_profile
+  mail:
+    host: smtp.gmail.com
+    username: ${YOUR_EMAIL}
+    ## step1: go to https://myaccount.google.com/security
+    ## step2: turn on "2-Step Verification"
+    ## step3: go to "App passwords"
+    ## step4: register app and copy password gg generate show in screen below code
+    ## if not found "APP PASSWORD", you go to link https://myaccount.google.com/apppasswords
+    password: ${APP_PASSWORD}
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          port: 25
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
 jwt:
   privateKey: s30AjBawg1JBD92Gab5t8UDzl/+WSSug1VmLErKG8JA=
 
