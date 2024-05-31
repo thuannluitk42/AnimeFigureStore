@@ -94,4 +94,6 @@ public class ClientService implements ClientServiceImp {
         users.setLogged(Boolean.TRUE);
         return users;
     }
+
+
 }

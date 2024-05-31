@@ -28,8 +28,14 @@ public class EmailController {
     }
 
     @PostMapping("/send-email-verify-account")
-    public String sendHtmlEmailUseGG(@RequestBody EmailDetails details) throws MessagingException {
+    public String sendEmailVerifyAccount(@RequestBody EmailDetails details) throws MessagingException {
         String status = emailService.sendEmailVerifyAccount(details);
+        return status;
+    }
+
+    @PostMapping("/send-email-forgot-pw")
+    public String sendEmailForgotPW(@RequestBody EmailDetails details) throws MessagingException {
+        String status = emailService.sendEmaiForgotPW(details);
         return status;
     }
 }

@@ -33,4 +33,13 @@ public class StringConstant {
 
     }
 
+    public class TemplateEmail {
+        public static final String TEMPLATE_EMAIL_VERIFY_ACCOUNT = "email_verification";
+        public static final String TEMPLATE_EMAIL_FORGOT_PASSWORD = "email_forgot_pw";
+        public static final String SHOP_LOGO_IMAGE = "../static/images/logo_tpstore.png";
+        public static final String MAIL_SUBJECT_VERIFY_ACCOUNT = "Registration Confirmation";
+        public static final String MAIL_SUBJECT_FORGOT_PASSWORD = "Reset Password Confirmation";
+
+    }
+
 }

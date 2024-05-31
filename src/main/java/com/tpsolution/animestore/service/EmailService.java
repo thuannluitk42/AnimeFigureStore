@@ -1,17 +1,16 @@
 package com.tpsolution.animestore.service;
 
+import com.tpsolution.animestore.constant.StringConstant;
 import com.tpsolution.animestore.dto.EmailDetails;
 import com.tpsolution.animestore.service.imp.EmailServiceImpl;
-
-import java.io.File;
-
 import com.tpsolution.animestore.utils.CommonUtils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,13 +19,14 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.File;
+
 // send email with gmail
 @Service
 public class EmailService implements EmailServiceImpl {
 
-    private static final String TEMPLATE_NAME = "email_verification";
-    private static final String SHOP_LOGO_IMAGE = "templates/images/logo_tpstore.png";
-    private static final String MAIL_SUBJECT = "Registration Confirmation";
+    private static final Logger logger = LogManager.getLogger(EmailService.class);
+
     @Autowired
     private TemplateEngine htmlTemplateEngine;
 
@@ -86,24 +86,54 @@ public class EmailService implements EmailServiceImpl {
     }
 
     public String sendEmailVerifyAccount(EmailDetails details) throws MessagingException {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper email = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-        String confirmationUrl = "http://localhost:8080/client/generated_confirmation_url";
+        logger.info("#sendEmailVerifyAccount email: {}", details.getRecipient());
+
         try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper email = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            String confirmationUrl = "http://localhost:8080/client/generated_confirmation_url";
+
             email.setFrom(sender);
             email.setTo(details.getRecipient());
-            email.setSubject(MAIL_SUBJECT);
+            email.setSubject(StringConstant.TemplateEmail.MAIL_SUBJECT_VERIFY_ACCOUNT);
 
             Context ctx = new Context(LocaleContextHolder.getLocale());
             ctx.setVariable("email", details.getRecipient());
             ctx.setVariable("name", CommonUtils.extractUsernameFromEmail(details.getRecipient()));
-            ctx.setVariable("shopLogo", SHOP_LOGO_IMAGE);
+            ctx.setVariable("shopLogo", StringConstant.TemplateEmail.SHOP_LOGO_IMAGE);
             ctx.setVariable("url", confirmationUrl);
-            String htmlContent = htmlTemplateEngine.process(TEMPLATE_NAME, ctx);
+            String htmlContent = htmlTemplateEngine.process(StringConstant.TemplateEmail.TEMPLATE_EMAIL_VERIFY_ACCOUNT, ctx);
             email.setText(htmlContent, true);
 
 //            ClassPathResource clr = new ClassPathResource(SHOP_LOGO_IMAGE);
 //            email.addInline("springLogo", clr, PNG_MIME);email.addInline("springLogo", clr, PNG_MIME);
+
+            javaMailSender.send(mimeMessage);
+            return "Mail sent Successfully";
+        } catch (Exception e) {
+            return "Error while Sending Mail";
+        }
+    }
+
+    @Override
+    public String sendEmaiForgotPW(EmailDetails details) {
+        logger.info("#sendEmaiForgotPW email: {}", details.getRecipient());
+
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper email = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            String confirmationUrl = "http://localhost:8080/client/client-forgot-password";
+
+            email.setFrom(sender);
+            email.setTo(details.getRecipient());
+            email.setSubject(StringConstant.TemplateEmail.MAIL_SUBJECT_FORGOT_PASSWORD);
+
+            Context ctx = new Context(LocaleContextHolder.getLocale());
+            ctx.setVariable("username", CommonUtils.extractUsernameFromEmail(details.getRecipient()));
+            ctx.setVariable("shopLogo", StringConstant.TemplateEmail.SHOP_LOGO_IMAGE);
+            ctx.setVariable("url", confirmationUrl);
+            String htmlContent = htmlTemplateEngine.process(StringConstant.TemplateEmail.TEMPLATE_EMAIL_FORGOT_PASSWORD, ctx);
+            email.setText(htmlContent, true);
 
             javaMailSender.send(mimeMessage);
             return "Mail sent Successfully";
