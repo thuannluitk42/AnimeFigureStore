@@ -4,11 +4,13 @@ import com.tpsolution.animestore.constant.ErrorMessage;
 import com.tpsolution.animestore.dto.CategoryDTO;
 import com.tpsolution.animestore.entity.Category;
 import com.tpsolution.animestore.entity.Product;
+import com.tpsolution.animestore.entity.ProductPriceHistory;
 import com.tpsolution.animestore.exception.BadRequestException;
 import com.tpsolution.animestore.exception.NotFoundException;
 import com.tpsolution.animestore.payload.*;
 import com.tpsolution.animestore.repository.CategoryRepository;
 import com.tpsolution.animestore.repository.ProductCriteriaRepository;
+import com.tpsolution.animestore.repository.ProductPriceHistoryRepository;
 import com.tpsolution.animestore.repository.ProductRepository;
 import com.tpsolution.animestore.service.imp.ProductServiceImp;
 import com.tpsolution.animestore.utils.CommonUtils;
@@ -27,10 +29,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tpsolution.animestore.repository.ProductCriteriaRepository.*;
@@ -45,6 +45,8 @@ public class ProductService implements ProductServiceImp {
     CategoryRepository categoryRepository;
     @Autowired
     ProductCriteriaRepository productCriteriaRepository;
+    @Autowired
+    private ProductPriceHistoryRepository productPriceHistoryRepository;
 
     @Override
     @Transactional
@@ -440,5 +442,27 @@ public class ProductService implements ProductServiceImp {
         productDetailResponse.setDeleted(product.isDeleted());
 
         return productDetailResponse;
+    }
+
+    @Transactional
+    public DataResponse updateProductPrice(Long productId, Double newPrice) {
+        Product product = productRepository.findById(UUID.fromString(String.valueOf(productId))).orElseThrow(() -> new RuntimeException("Product not found"));
+        Double oldPrice = product.getProductPrice();
+
+        // Update product price
+        product.setProductPrice(newPrice);
+        product.setUpdatedAt(LocalDateTime.now());
+        productRepository.save(product);
+
+        // Save price history
+        ProductPriceHistory priceHistory = new ProductPriceHistory();
+        priceHistory.setProduct(product);
+        priceHistory.setOldPrice(oldPrice);
+        priceHistory.setNewPrice(newPrice);
+        priceHistory.setChangeDate(LocalDateTime.now());
+        priceHistory.setCreatedAt(LocalDateTime.now());
+        productPriceHistoryRepository.save(priceHistory);
+
+        return DataResponse.ok(product);
     }
 }

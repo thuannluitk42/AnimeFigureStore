@@ -13,13 +13,15 @@ CREATE TABLE `categories` (
 CREATE TABLE `orders` (
                           `order_id` int NOT NULL AUTO_INCREMENT,
                           `user_id` int DEFAULT NULL,
+                          `voucher_id` INT DEFAULT NULL,
                           `total` decimal(10,0) DEFAULT NULL,
                           `delivery_address` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
                           `payment_option` int DEFAULT NULL COMMENT '0: pay offline, 1: pay online',
                           `payment_status` int DEFAULT NULL COMMENT '0: pending, 1: success, 2: failed',
                           `vnpay_transaction_id` int DEFAULT NULL COMMENT 'vnp_TxnRef: ma giao dich ben vnpay',
                           `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                          PRIMARY KEY (`order_id`)
+                          PRIMARY KEY (`order_id`),
+                          CONSTRAINT fk_voucher FOREIGN KEY (voucher_id) REFERENCES Voucher(voucher_id)
 );
 
 CREATE TABLE `orders_detail` (
@@ -105,6 +107,16 @@ CREATE TABLE user_vouchers (
                                FOREIGN KEY (user_id) REFERENCES users(user_id),
                                FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id),
                                UNIQUE (user_id, voucher_id)
+);
+
+CREATE TABLE ProductPriceHistory (
+                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                     product_id BIGINT NOT NULL,  -- Foreign key to Product table
+                                     old_price DECIMAL(10, 2) NOT NULL,
+                                     new_price DECIMAL(10, 2) NOT NULL,
+                                     change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                     CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES Product(id)
 );
 
 INSERT INTO `roles` (`role_name`,`roles_descripion`, `is_deleted`,`created_date`)

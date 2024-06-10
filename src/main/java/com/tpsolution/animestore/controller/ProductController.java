@@ -64,4 +64,9 @@ public class ProductController {
     public ResponseEntity<DataResponse> changeStatusUser(@RequestBody DeleteIDsRequest request) {
         return ResponseEntity.ok(productService.changeStatusProducts(request));
     }
+
+    @PutMapping("/update-price/{id}")
+    public ResponseEntity<DataResponse> updateProductPrice(@PathVariable Long id, @RequestBody Double newPrice) {
+        return ResponseEntity.ok(productService.updateProductPrice(id, newPrice));
+    }
 }

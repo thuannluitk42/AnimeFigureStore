@@ -1,7 +1,9 @@
 package com.tpsolution.animestore.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -40,6 +42,11 @@ public class Order implements Serializable {
     @Column(name = "created_date")
     private Date createdDate;
 
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
+
 //    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private Set<OrderDetail> orderDetails = new HashSet<>();
+
 }

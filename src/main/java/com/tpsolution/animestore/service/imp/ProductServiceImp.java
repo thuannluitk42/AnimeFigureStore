@@ -1,5 +1,6 @@
 package com.tpsolution.animestore.service.imp;
 
+import com.tpsolution.animestore.entity.Product;
 import com.tpsolution.animestore.payload.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,4 +23,6 @@ public interface ProductServiceImp {
     DataResponse showProductHomePage();
 
     DataResponse changeStatusProducts(DeleteIDsRequest request);
+
+    DataResponse updateProductPrice(Long productId, Double newPrice);
 }

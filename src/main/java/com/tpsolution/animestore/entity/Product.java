@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -45,6 +46,8 @@ public class Product implements Serializable {
 
     @Column(name = "created_date",nullable = true)
     private Date createdDate;
+    @Column(name = "updated_at",nullable = true)
+    private LocalDateTime updatedAt;
 
 //    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private Set<OrderDetail> orderDetails = new HashSet<>();
