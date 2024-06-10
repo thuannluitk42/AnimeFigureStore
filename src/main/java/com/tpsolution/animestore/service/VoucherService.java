@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class VoucherService implements VoucherServiceImp {
@@ -62,5 +63,39 @@ public class VoucherService implements VoucherServiceImp {
 
         userVoucherRepository.save(userVoucher);
         return DataResponse.ok("Voucher used successfully");
+    }
+
+    @Override
+    public DataResponse getAllVouchers() {
+        return DataResponse.ok(voucherRepository.findAll());
+    }
+
+    @Override
+    public DataResponse getVoucherById(Long id) {
+        return DataResponse.ok(voucherRepository.findById(UUID.fromString(String.valueOf(id))));
+    }
+
+    @Override
+    public DataResponse createVoucher(Voucher voucher) {
+        return DataResponse.ok(voucherRepository.save(voucher));
+    }
+
+    @Override
+    public DataResponse updateVoucher(Long id, Voucher voucherDetails) {
+        return DataResponse.ok(voucherRepository.findById(UUID.fromString(String.valueOf(id))).map(voucher -> {
+            voucher.setVoucherCode(voucherDetails.getVoucherCode());
+            voucher.setDescription(voucherDetails.getDescription());
+            voucher.setDiscountValue(voucherDetails.getDiscountValue());
+            voucher.setExpiryDate(voucherDetails.getExpiryDate());
+            voucher.setMaxUsage(voucherDetails.getMaxUsage());
+            voucher.setUpdatedAt(voucherDetails.getUpdatedAt());
+            return voucherRepository.save(voucher);
+        }));
+    }
+
+    @Override
+    public DataResponse deleteVoucher(Long id) {
+        voucherRepository.deleteById(UUID.fromString(String.valueOf(id)));
+        return DataResponse.ok("");
     }
 }
