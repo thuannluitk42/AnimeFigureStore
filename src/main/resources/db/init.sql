@@ -81,6 +81,30 @@ CREATE TABLE `users_roles` (
                                PRIMARY KEY (`user_id`,`role_id`)
 );
 
+CREATE TABLE vouchers (
+                          voucher_id INT AUTO_INCREMENT PRIMARY KEY,
+                          voucher_code VARCHAR(50) NOT NULL UNIQUE,
+                          description VARCHAR(255),
+                          discount_value DECIMAL(10, 2) NOT NULL,
+                          expiry_date DATE NOT NULL,
+                          max_usage INT NOT NULL DEFAULT 1,
+                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_vouchers (
+                               user_voucher_id INT AUTO_INCREMENT PRIMARY KEY,
+                               user_id INT NOT NULL,
+                               voucher_id INT NOT NULL,
+                               usage_count INT NOT NULL DEFAULT 0,
+                               last_used TIMESTAMP,
+                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                               FOREIGN KEY (user_id) REFERENCES users(user_id),
+                               FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id),
+                               UNIQUE (user_id, voucher_id)
+);
+
 INSERT INTO `roles` (`role_name`,`roles_descripion`, `is_deleted`,`created_date`)
 VALUES ('admin','manage everything',0,null),
        ('salesperson','manage product price, customer, shipping, order and sales report',0,null),
