@@ -1,4 +1,4 @@
-package com.tpsolution.animestore.service;
+package com.tpsolution.animestore.schedule;
 
 import com.tpsolution.animestore.entity.Voucher;
 import com.tpsolution.animestore.repository.VoucherRepository;

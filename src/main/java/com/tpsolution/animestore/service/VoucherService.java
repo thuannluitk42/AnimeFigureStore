@@ -3,6 +3,7 @@ package com.tpsolution.animestore.service;
 import com.tpsolution.animestore.entity.UserVoucher;
 import com.tpsolution.animestore.entity.Users;
 import com.tpsolution.animestore.entity.Voucher;
+import com.tpsolution.animestore.payload.AddVoucherRequest;
 import com.tpsolution.animestore.payload.DataResponse;
 import com.tpsolution.animestore.repository.UserVoucherRepository;
 import com.tpsolution.animestore.repository.UsersRepository;
@@ -82,19 +83,30 @@ public class VoucherService implements VoucherServiceImp {
     }
 
     @Override
-    public DataResponse createVoucher(Voucher voucher) {
+    public DataResponse createVoucher(AddVoucherRequest request) {
+        Voucher voucher = buildVoucher(request);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        voucher.setCreatedAt(localDateTime);
         return DataResponse.ok(voucherRepository.save(voucher));
     }
 
+    private Voucher buildVoucher(AddVoucherRequest request) {
+        Voucher voucher = new Voucher();
+        voucher.setVoucherCode(request.getVoucherCode());
+        voucher.setDescription(request.getDescription());
+        voucher.setDiscountValue(request.getDiscountValue());
+        voucher.setExpiryDate(request.getExpiryDate());
+        voucher.setMaxUsage(request.getMaxUsage());
+        voucher.setActive(request.isActive());
+        return voucher;
+    }
+
     @Override
-    public DataResponse updateVoucher(Long id, Voucher voucherDetails) {
+    public DataResponse updateVoucher(Long id, AddVoucherRequest request) {
         return DataResponse.ok(voucherRepository.findById(UUID.fromString(String.valueOf(id))).map(voucher -> {
-            voucher.setVoucherCode(voucherDetails.getVoucherCode());
-            voucher.setDescription(voucherDetails.getDescription());
-            voucher.setDiscountValue(voucherDetails.getDiscountValue());
-            voucher.setExpiryDate(voucherDetails.getExpiryDate());
-            voucher.setMaxUsage(voucherDetails.getMaxUsage());
-            voucher.setUpdatedAt(voucherDetails.getUpdatedAt());
+            voucher = buildVoucher(request);
+            LocalDateTime localDateTime = LocalDateTime.now();
+            voucher.setUpdatedAt(localDateTime);
             return voucherRepository.save(voucher);
         }));
     }
