@@ -31,6 +31,11 @@ public class Voucher implements Serializable {
     @Column(name = "max_usage")
     private Integer maxUsage;
 
+    @Column(name = "active")
+    private boolean active;  // Field to indicate if voucher is active
+    @Column(name = "usage_count")
+    private Integer usageCount;  // Field to track the number of times the voucher has been used
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")

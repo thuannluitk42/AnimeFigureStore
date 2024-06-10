@@ -88,6 +88,8 @@ CREATE TABLE vouchers (
                           discount_value DECIMAL(10, 2) NOT NULL,
                           expiry_date DATE NOT NULL,
                           max_usage INT NOT NULL DEFAULT 1,
+                          active boolean,
+                          usage_count INT NOT NULL DEFAULT 0,
                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

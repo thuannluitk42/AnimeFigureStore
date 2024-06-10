@@ -62,6 +62,12 @@ public class VoucherService implements VoucherServiceImp {
         userVoucher.setUpdatedAt(LocalDateTime.now());
 
         userVoucherRepository.save(userVoucher);
+
+        // Update voucher usage count and check if it should be disabled
+        voucher.setUsageCount(voucher.getUsageCount() + 1);
+        if (voucher.getUsageCount() >= voucher.getMaxUsage()) {
+            voucher.setActive(false);
+        }
         return DataResponse.ok("Voucher used successfully");
     }
 
