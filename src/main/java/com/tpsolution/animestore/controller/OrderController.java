@@ -24,8 +24,7 @@ import java.util.List;
 @RequestMapping("/admin/order")
 public class OrderController {
 
-    @Autowired
-    OrderServiceImp orderService;
+
 
     @Autowired
     OrderDetailRepository orderDetailRepository;

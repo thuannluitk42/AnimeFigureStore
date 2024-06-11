@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS animefigurestore;
 USE animefigurestore;
 
 CREATE TABLE `categories` (
-                              `category_id` int NOT NULL AUTO_INCREMENT,
+                              `category_id` INT NOT NULL AUTO_INCREMENT,
                               `category_name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
                               `is_deleted` tinyint(1) DEFAULT '0',
                               `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -11,7 +11,7 @@ CREATE TABLE `categories` (
 );
 
 CREATE TABLE `orders` (
-                          `order_id` int NOT NULL AUTO_INCREMENT,
+                          `order_id` INT NOT NULL AUTO_INCREMENT,
                           `user_id` int DEFAULT NULL,
                           `voucher_id` INT DEFAULT NULL,
                           `total` decimal(10,0) DEFAULT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE `orders` (
 );
 
 CREATE TABLE `orders_detail` (
-                                 `order_id` int NOT NULL,
+                                 `order_id` INT NOT NULL AUTO_INCREMENT,
                                  `product_id` int NOT NULL,
                                  `unit_price` decimal(10,0) DEFAULT NULL COMMENT 'gia luc tinh tien',
                                  `amount` decimal(10,0) DEFAULT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `orders_detail` (
 );
 
 CREATE TABLE `products` (
-                            `product_id` int NOT NULL AUTO_INCREMENT,
+                            `product_id` INT NOT NULL AUTO_INCREMENT,
                             `product_name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
                             `product_price` decimal(10,0) NOT NULL,
                             `product_images` text COMMENT 'danh sach anh',
@@ -49,7 +49,7 @@ CREATE TABLE `products` (
 );
 
 CREATE TABLE `roles` (
-                         `role_id` int NOT NULL AUTO_INCREMENT,
+                         `role_id` INT NOT NULL AUTO_INCREMENT,
                          `role_name` varchar(50) NOT NULL,
                          `roles_descripion` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
                          `is_deleted` tinyint(1) DEFAULT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE `roles` (
 );
 
 CREATE TABLE `users` (
-                         `user_id` int NOT NULL AUTO_INCREMENT,
+                         `user_id` INT NOT NULL AUTO_INCREMENT,
                          `username` varchar(50) NOT NULL,
                          `password` varchar(255) NOT NULL,
                          `fullname` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
@@ -83,20 +83,20 @@ CREATE TABLE `users_roles` (
                                PRIMARY KEY (`user_id`,`role_id`)
 );
 
-CREATE TABLE vouchers (
+CREATE TABLE `vouchers` (
                           voucher_id INT AUTO_INCREMENT PRIMARY KEY,
                           voucher_code VARCHAR(50) NOT NULL UNIQUE,
                           description VARCHAR(255),
                           discount_value DECIMAL(10, 2) NOT NULL,
                           expiry_date DATE NOT NULL,
                           max_usage INT NOT NULL DEFAULT 1,
-                          active boolean,
+                          active boolean DEFAULT false,
                           usage_count INT NOT NULL DEFAULT 0,
                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE user_vouchers (
+CREATE TABLE `user_vouchers` (
                                user_voucher_id INT AUTO_INCREMENT PRIMARY KEY,
                                user_id INT NOT NULL,
                                voucher_id INT NOT NULL,
@@ -109,14 +109,23 @@ CREATE TABLE user_vouchers (
                                UNIQUE (user_id, voucher_id)
 );
 
-CREATE TABLE ProductPriceHistory (
-                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE `product_price_history` (
+                                     id INT AUTO_INCREMENT PRIMARY KEY,
                                      product_id BIGINT NOT NULL,  -- Foreign key to Product table
                                      old_price DECIMAL(10, 2) NOT NULL,
                                      new_price DECIMAL(10, 2) NOT NULL,
                                      change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                      CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES Product(id)
+);
+
+CREATE TABLE `post` (
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     title VARCHAR(255) NOT NULL,
+                     content TEXT NOT NULL,
+                     author VARCHAR(255) NOT NULL,
+                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 INSERT INTO `roles` (`role_name`,`roles_descripion`, `is_deleted`,`created_date`)

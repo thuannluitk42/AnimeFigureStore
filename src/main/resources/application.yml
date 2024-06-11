@@ -76,6 +76,15 @@ spring:
             required: true
     default-encoding: UTF-8
 
+  # Redis Server Configuration
+  data:
+    redis:
+      database: 0
+      host: localhost # Redis server host (default: localhost)
+      port: 6379 # Redis server port (default: 6379)
+      password: Abc12345@
+      timeout: 60000
+
 jwt:
   privateKey: s30AjBawg1JBD92Gab5t8UDzl/+WSSug1VmLErKG8JA=
 

@@ -2,6 +2,7 @@ package com.tpsolution.animestore.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "products")
+@RedisHash("Product")
 public class Product implements Serializable {
 
     @Id
