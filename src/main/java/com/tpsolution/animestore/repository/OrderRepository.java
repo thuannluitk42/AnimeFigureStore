@@ -27,13 +27,28 @@ public interface OrderRepository extends CrudRepository<Order, UUID>, JpaSpecifi
     List<Order> findOrderByPaymentStatus(int paymentStatus);
 
     @Query("SELECT o FROM Order o WHERE o.createdDate = :yesterday ORDER BY o.total DESC LIMIT 4")
-    List<Order> get4OrdersWithHighestTotalBillYesterday(LocalDate yesterday);
+    List<Order> get4OrderWithHighestTotalBillYesterday(LocalDate yesterday);
     @Query("SELECT o FROM Order o WHERE o.createdDate = :currentDate ORDER BY o.total DESC LIMIT 2")
-    List<Order> get2OrdersWithHighestTotalBillToday(LocalDate currentDate);
+    List<Order> get2OrderWithHighestTotalBillToday(LocalDate currentDate);
 
     @Query("SELECT SUM(o.total) FROM Order o WHERE o.paymentStatus = 1")
     double sumTotalRevenue();
 
     @Query("SELECT AVG(o.total) FROM Order o WHERE o.paymentStatus = 1")
     double averageOrderValue();
+
+    @Query("SELECT YEAR(o.createdDate) AS year, MONTH(o.createdDate) AS month, SUM(o.total) AS revenue " +
+            "FROM Order o WHERE o.paymentStatus = 1 GROUP BY YEAR(o.createdDate), MONTH(o.createdDate) " +
+            "ORDER BY YEAR(o.createdDate), MONTH(o.createdDate)")
+    List<Object[]> findMonthlyRevenue();
+
+    @Query("SELECT YEAR(o.createdDate) AS year, QUARTER(o.createdDate) AS quarter, SUM(o.total) AS revenue " +
+            "FROM Order o WHERE o.paymentStatus = 1 GROUP BY YEAR(o.createdDate), QUARTER(o.createdDate) " +
+            "ORDER BY YEAR(o.createdDate), QUARTER(o.createdDate)")
+    List<Object[]> findQuarterlyRevenue();
+
+    @Query("SELECT YEAR(o.createdDate) AS year, SUM(o.total) AS revenue " +
+            "FROM Order o WHERE o.paymentStatus = 1 GROUP BY YEAR(o.createdDate) " +
+            "ORDER BY YEAR(o.createdDate)")
+    List<Object[]> findYearlyRevenue();
 }

@@ -19,4 +19,19 @@ public class StatisticsController {
         return ResponseEntity.ok(statisticsService.getStatistics());
     }
 
+    @GetMapping("/monthly-revenue")
+    public ResponseEntity<DataResponse> getMonthlyRevenue() {
+        return ResponseEntity.ok(statisticsService.getMonthlyRevenue());
+    }
+
+    @GetMapping("/quarterly-revenue")
+    public ResponseEntity<DataResponse> getQuarterlyRevenue() {
+        return ResponseEntity.ok(statisticsService.getQuarterlyRevenue());
+    }
+
+    @GetMapping("/yearly-revenue")
+    public ResponseEntity<DataResponse> getYearlyRevenue() {
+        return ResponseEntity.ok(statisticsService.getYearlyRevenue());
+    }
+
 }

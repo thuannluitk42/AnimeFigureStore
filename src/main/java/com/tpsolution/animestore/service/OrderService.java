@@ -275,7 +275,7 @@ public class OrderService implements OrderServiceImp  {
 
         LocalDate currentDate = LocalDate.now();
         LocalDate yesterdayDate = currentDate.minusDays(1);
-        List<Order> orderList = orderRepository.get4OrdersWithHighestTotalBillYesterday(yesterdayDate);
+        List<Order> orderList = orderRepository.get4OrderWithHighestTotalBillYesterday(yesterdayDate);
 
         List<DataOrderResponse> dataOrderResponses = new ArrayList<>();
 
@@ -307,7 +307,7 @@ public class OrderService implements OrderServiceImp  {
         logger.info("#getInfo2OldBillToday");
         LocalDate currentDate = LocalDate.now();
 
-        List<Order> orderList = orderRepository.get2OrdersWithHighestTotalBillToday(currentDate);
+        List<Order> orderList = orderRepository.get2OrderWithHighestTotalBillToday(currentDate);
         List<DataOrderResponse> dataOrderResponses = new ArrayList<>();
 
         if (orderList.size() > 0 ) {

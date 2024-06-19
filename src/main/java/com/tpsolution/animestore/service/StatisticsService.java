@@ -1,6 +1,9 @@
 package com.tpsolution.animestore.service;
 
+import com.tpsolution.animestore.dto.MonthlyRevenueDTO;
+import com.tpsolution.animestore.dto.QuarterlyRevenueDTO;
 import com.tpsolution.animestore.dto.StatisticsDTO;
+import com.tpsolution.animestore.dto.YearlyRevenueDTO;
 import com.tpsolution.animestore.payload.DataResponse;
 import com.tpsolution.animestore.repository.OrderDetailRepository;
 import com.tpsolution.animestore.repository.OrderRepository;
@@ -10,6 +13,8 @@ import com.tpsolution.animestore.service.imp.StatisticsServiceImpl;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -46,5 +51,26 @@ public class StatisticsService implements StatisticsServiceImpl {
         statisticsDTO.setActiveUsers(userRepository.countActiveUsers());
 
         return DataResponse.ok(statisticsDTO);
+    }
+
+    @Override
+    public DataResponse getMonthlyRevenue() {
+        return DataResponse.ok(orderRepository.findMonthlyRevenue().stream()
+                .map(result -> new MonthlyRevenueDTO((Integer) result[0], (Integer) result[1], (Double) result[2]))
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public DataResponse getQuarterlyRevenue() {
+        return DataResponse.ok(orderRepository.findQuarterlyRevenue().stream()
+                .map(result -> new QuarterlyRevenueDTO((Integer) result[0], (Integer) result[1], (Double) result[2]))
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public DataResponse getYearlyRevenue() {
+        return DataResponse.ok(orderRepository.findYearlyRevenue().stream()
+                .map(result -> new YearlyRevenueDTO((Integer) result[0], (Double) result[1]))
+                .collect(Collectors.toList()));
     }
 }
