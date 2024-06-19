@@ -30,4 +30,10 @@ public interface OrderRepository extends CrudRepository<Order, UUID>, JpaSpecifi
     List<Order> get4OrdersWithHighestTotalBillYesterday(LocalDate yesterday);
     @Query("SELECT o FROM Order o WHERE o.createdDate = :currentDate ORDER BY o.total DESC LIMIT 2")
     List<Order> get2OrdersWithHighestTotalBillToday(LocalDate currentDate);
+
+    @Query("SELECT SUM(o.total) FROM Order o WHERE o.paymentStatus = 1")
+    double sumTotalRevenue();
+
+    @Query("SELECT AVG(o.total) FROM Order o WHERE o.paymentStatus = 1")
+    double averageOrderValue();
 }

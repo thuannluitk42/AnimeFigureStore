@@ -13,4 +13,7 @@ import java.util.UUID;
 public interface OrderDetailRepository extends CrudRepository<OrderDetail, UUID>, JpaSpecificationExecutor<OrderDetail> {
     @Query("SELECT o FROM OrderDetail o WHERE o.keys.orderId = :orderId")
     List<OrderDetail> findOrderDetailByOrderId (int orderId);
+
+    @Query("SELECT COUNT(od.keys.productId) FROM OrderDetail od JOIN Product p ON od.keys.productId = p.productId GROUP BY p.category.categoryId")
+    long countProductsSoldPerCategory();
 }

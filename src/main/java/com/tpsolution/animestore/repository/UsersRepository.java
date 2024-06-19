@@ -28,5 +28,8 @@ public interface UsersRepository extends CrudRepository<Users, UUID>, JpaSpecifi
 
     Optional<Users> findByEmail(String email);
 
+    @Query("SELECT COUNT(u) FROM Users u WHERE u.isLogged = true")
+    long countActiveUsers();
+
 }
 
