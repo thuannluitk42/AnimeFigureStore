@@ -4,128 +4,134 @@ USE animefigurestore;
 
 CREATE TABLE `categories` (
                               `category_id` INT NOT NULL AUTO_INCREMENT,
-                              `category_name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-                              `is_deleted` tinyint(1) DEFAULT '0',
-                              `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                              `category_name` VARCHAR(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+                              `is_deleted` TINYINT(1) DEFAULT '0',
+                              `created_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
                               PRIMARY KEY (`category_id`)
 );
 
 CREATE TABLE `orders` (
                           `order_id` INT NOT NULL AUTO_INCREMENT,
-                          `user_id` int DEFAULT NULL,
+                          `user_id` INT DEFAULT NULL,
                           `voucher_id` INT DEFAULT NULL,
-                          `total` decimal(10,0) DEFAULT NULL,
-                          `delivery_address` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                          `payment_option` int DEFAULT NULL COMMENT '0: pay offline, 1: pay online',
-                          `payment_status` int DEFAULT NULL COMMENT '0: pending, 1: success, 2: failed',
-                          `vnpay_transaction_id` int DEFAULT NULL COMMENT 'vnp_TxnRef: ma giao dich ben vnpay',
-                          `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                          `total` DECIMAL(10,0) DEFAULT NULL,
+                          `delivery_address` VARCHAR(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+                          `payment_option` INT DEFAULT NULL COMMENT '0: pay offline, 1: pay online',
+                          `payment_status` INT DEFAULT NULL COMMENT '0: pending, 1: success, 2: failed',
+                          `vnpay_transaction_id` INT DEFAULT NULL COMMENT 'vnp_TxnRef: transaction id at vnpay',
+                          `created_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
                           PRIMARY KEY (`order_id`),
-                          CONSTRAINT fk_voucher FOREIGN KEY (voucher_id) REFERENCES Voucher(voucher_id)
+                          CONSTRAINT fk_user_order FOREIGN KEY (user_id) REFERENCES users(user_id),
+                          CONSTRAINT fk_voucher_order FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id)
 );
 
 CREATE TABLE `orders_detail` (
-                                 `order_id` INT NOT NULL AUTO_INCREMENT,
-                                 `product_id` int NOT NULL,
-                                 `unit_price` decimal(10,0) DEFAULT NULL COMMENT 'gia luc tinh tien',
-                                 `amount` decimal(10,0) DEFAULT NULL,
-                                 `sub_total` decimal(10,0) DEFAULT NULL,
-                                 PRIMARY KEY (`order_id`,`product_id`)
+                                 `order_id` INT NOT NULL,
+                                 `product_id` INT NOT NULL,
+                                 `unit_price` DECIMAL(10,0) DEFAULT NULL COMMENT 'price at the time of purchase',
+                                 `amount` DECIMAL(10,0) DEFAULT NULL,
+                                 `sub_total` DECIMAL(10,0) DEFAULT NULL,
+                                 PRIMARY KEY (`order_id`,`product_id`),
+                                 CONSTRAINT fk_order_detail_order FOREIGN KEY (order_id) REFERENCES orders(order_id),
+                                 CONSTRAINT fk_order_detail_product FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
 CREATE TABLE `products` (
                             `product_id` INT NOT NULL AUTO_INCREMENT,
-                            `product_name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-                            `product_price` decimal(10,0) NOT NULL,
-                            `product_images` text COMMENT 'danh sach anh',
-                            `product_quantity` int DEFAULT NULL,
-                            `product_description` text,
-                            `discount` text COMMENT 'gia tri giam gia 50%, 50000',
-                            `category_id` int NOT NULL,
-                            `is_deleted` tinyint(1) DEFAULT '0',
-                            `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                            `url_image` text,
-                            PRIMARY KEY (`product_id`)
+                            `product_name` VARCHAR(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+                            `product_price` DECIMAL(10,0) NOT NULL,
+                            `product_images` TEXT COMMENT 'list of images',
+                            `product_quantity` INT DEFAULT NULL,
+                            `product_description` TEXT,
+                            `discount` TEXT COMMENT 'discount value 50%, 50000',
+                            `category_id` INT NOT NULL,
+                            `is_deleted` TINYINT(1) DEFAULT '0',
+                            `created_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                            `url_image` TEXT,
+                            PRIMARY KEY (`product_id`),
+                            CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
 
 CREATE TABLE `roles` (
                          `role_id` INT NOT NULL AUTO_INCREMENT,
-                         `role_name` varchar(50) NOT NULL,
-                         `roles_descripion` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                         `is_deleted` tinyint(1) DEFAULT NULL,
-                         `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                         `role_name` VARCHAR(50) NOT NULL,
+                         `roles_description` VARCHAR(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+                         `is_deleted` TINYINT(1) DEFAULT NULL,
+                         `created_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
                          PRIMARY KEY (`role_id`)
 );
 
 CREATE TABLE `users` (
                          `user_id` INT NOT NULL AUTO_INCREMENT,
-                         `username` varchar(50) NOT NULL,
-                         `password` varchar(255) NOT NULL,
-                         `fullname` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                         `address` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                         `phonenumber` varchar(12) DEFAULT NULL,
-                         `email` varchar(255) DEFAULT NULL,
-                         `dob` varchar(10) DEFAULT NULL,
-                         `avatar` text,
-                         `is_deleted` tinyint(1) DEFAULT NULL,
-                         `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                         `token` varchar(255) DEFAULT NULL,
-                         `provider` varchar(15) DEFAULT NULL,
-                         `is_Logged` tinyint(1) DEFAULT NULL,
-                         `url_image` text,
-                         `oauth2_id` text,
+                         `username` VARCHAR(50) NOT NULL,
+                         `password` VARCHAR(255) NOT NULL,
+                         `fullname` VARCHAR(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+                         `address` VARCHAR(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+                         `phonenumber` VARCHAR(12) DEFAULT NULL,
+                         `email` VARCHAR(255) DEFAULT NULL,
+                         `dob` VARCHAR(10) DEFAULT NULL,
+                         `avatar` TEXT,
+                         `is_deleted` TINYINT(1) DEFAULT NULL,
+                         `created_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                         `token` VARCHAR(255) DEFAULT NULL,
+                         `provider` VARCHAR(15) DEFAULT NULL,
+                         `is_logged` TINYINT(1) DEFAULT NULL,
+                         `url_image` TEXT,
+                         `oauth2_id` TEXT,
                          PRIMARY KEY (`user_id`)
 );
 
 CREATE TABLE `users_roles` (
-                               `user_id` int NOT NULL,
-                               `role_id` int NOT NULL,
-                               PRIMARY KEY (`user_id`,`role_id`)
+                               `user_id` INT NOT NULL,
+                               `role_id` INT NOT NULL,
+                               PRIMARY KEY (`user_id`, `role_id`),
+                               CONSTRAINT fk_users_roles_user FOREIGN KEY (user_id) REFERENCES users(user_id),
+                               CONSTRAINT fk_users_roles_role FOREIGN KEY (role_id) REFERENCES roles(role_id)
 );
 
 CREATE TABLE `vouchers` (
-                          voucher_id INT AUTO_INCREMENT PRIMARY KEY,
-                          voucher_code VARCHAR(50) NOT NULL UNIQUE,
-                          description VARCHAR(255),
-                          discount_value DECIMAL(10, 2) NOT NULL,
-                          expiry_date DATE NOT NULL,
-                          max_usage INT NOT NULL DEFAULT 1,
-                          active boolean DEFAULT false,
-                          usage_count INT NOT NULL DEFAULT 0,
-                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                            `voucher_id` INT AUTO_INCREMENT PRIMARY KEY,
+                            `voucher_code` VARCHAR(50) NOT NULL UNIQUE,
+                            `description` VARCHAR(255),
+                            `discount_value` DECIMAL(10, 2) NOT NULL,
+                            `expiry_date` DATE NOT NULL,
+                            `max_usage` INT NOT NULL DEFAULT 1,
+                            `active` BOOLEAN DEFAULT FALSE,
+                            `usage_count` INT NOT NULL DEFAULT 0,
+                            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `user_vouchers` (
-                               user_voucher_id INT AUTO_INCREMENT PRIMARY KEY,
-                               user_id INT NOT NULL,
-                               voucher_id INT NOT NULL,
-                               usage_count INT NOT NULL DEFAULT 0,
-                               last_used TIMESTAMP,
-                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                               FOREIGN KEY (user_id) REFERENCES users(user_id),
-                               FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id),
-                               UNIQUE (user_id, voucher_id)
+                                 `user_voucher_id` INT AUTO_INCREMENT PRIMARY KEY,
+                                 `user_id` INT NOT NULL,
+                                 `voucher_id` INT NOT NULL,
+                                 `usage_count` INT NOT NULL DEFAULT 0,
+                                 `last_used` TIMESTAMP,
+                                 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                 `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                 CONSTRAINT fk_user_voucher_user FOREIGN KEY (user_id) REFERENCES users(user_id),
+                                 CONSTRAINT fk_user_voucher_voucher FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id),
+                                 UNIQUE (user_id, voucher_id)
 );
 
 CREATE TABLE `product_price_history` (
-                                     id INT AUTO_INCREMENT PRIMARY KEY,
-                                     product_id BIGINT NOT NULL,  -- Foreign key to Product table
-                                     old_price DECIMAL(10, 2) NOT NULL,
-                                     new_price DECIMAL(10, 2) NOT NULL,
-                                     change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                     CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES Product(id)
+                                         `id` INT AUTO_INCREMENT PRIMARY KEY,
+                                         `product_id` INT NOT NULL,
+                                         `old_price` DECIMAL(10, 2) NOT NULL,
+                                         `new_price` DECIMAL(10, 2) NOT NULL,
+                                         `change_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                         CONSTRAINT fk_product_price_history_product FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
 CREATE TABLE `post` (
-                     id INT AUTO_INCREMENT PRIMARY KEY,
-                     title VARCHAR(255) NOT NULL,
-                     content TEXT NOT NULL,
-                     author VARCHAR(255) NOT NULL,
-                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                        `id` INT AUTO_INCREMENT PRIMARY KEY,
+                        `title` VARCHAR(255) NOT NULL,
+                        `content` TEXT NOT NULL,
+                        `author` VARCHAR(255) NOT NULL,
+                        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 INSERT INTO `roles` (`role_name`,`roles_descripion`, `is_deleted`,`created_date`)

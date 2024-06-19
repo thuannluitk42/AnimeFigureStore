@@ -49,7 +49,7 @@ public class Users implements Serializable {
     @Column(name = "is_deleted",nullable = true)
     private boolean isDeleted;
 
-    @Column(name = "is_Logged",nullable = true)
+    @Column(name = "is_logged",nullable = true)
     private boolean isLogged;
 
     @Column(name = "created_date",nullable = true)
