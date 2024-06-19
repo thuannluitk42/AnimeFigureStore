@@ -10,4 +10,10 @@ public interface StatisticsServiceImpl {
     DataResponse getQuarterlyRevenue();
 
     DataResponse getYearlyRevenue();
+
+    DataResponse getMonthlyProductsSold();
+
+    DataResponse getQuarterlyProductsSold();
+
+    DataResponse getYearlyProductsSold();
 }

@@ -34,4 +34,19 @@ public class StatisticsController {
         return ResponseEntity.ok(statisticsService.getYearlyRevenue());
     }
 
+    @GetMapping("/monthly-products-sold")
+    public ResponseEntity<DataResponse> getMonthlyProductsSold() {
+        return ResponseEntity.ok(statisticsService.getMonthlyProductsSold());
+    }
+
+    @GetMapping("/quarterly-products-sold")
+    public ResponseEntity<DataResponse> getQuarterlyProductsSold() {
+        return ResponseEntity.ok(statisticsService.getQuarterlyProductsSold());
+    }
+
+    @GetMapping("/yearly-products-sold")
+    public ResponseEntity<DataResponse> getYearlyProductsSold() {
+        return ResponseEntity.ok(statisticsService.getYearlyProductsSold());
+    }
+
 }

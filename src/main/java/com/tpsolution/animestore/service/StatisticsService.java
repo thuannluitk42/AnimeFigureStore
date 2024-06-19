@@ -1,9 +1,6 @@
 package com.tpsolution.animestore.service;
 
-import com.tpsolution.animestore.dto.MonthlyRevenueDTO;
-import com.tpsolution.animestore.dto.QuarterlyRevenueDTO;
-import com.tpsolution.animestore.dto.StatisticsDTO;
-import com.tpsolution.animestore.dto.YearlyRevenueDTO;
+import com.tpsolution.animestore.dto.*;
 import com.tpsolution.animestore.payload.DataResponse;
 import com.tpsolution.animestore.repository.OrderDetailRepository;
 import com.tpsolution.animestore.repository.OrderRepository;
@@ -71,6 +68,27 @@ public class StatisticsService implements StatisticsServiceImpl {
     public DataResponse getYearlyRevenue() {
         return DataResponse.ok(orderRepository.findYearlyRevenue().stream()
                 .map(result -> new YearlyRevenueDTO((Integer) result[0], (Double) result[1]))
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public DataResponse getMonthlyProductsSold() {
+        return DataResponse.ok(orderDetailRepository.findMonthlyProductsSold().stream()
+                .map(result -> new MonthlyProductsSoldDTO((Integer) result[0], (Integer) result[1], ((Number) result[2]).intValue()))
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public DataResponse getQuarterlyProductsSold() {
+        return DataResponse.ok(orderDetailRepository.findQuarterlyProductsSold().stream()
+                .map(result -> new QuarterlyProductsSoldDTO((Integer) result[0], (Integer) result[1], ((Number) result[2]).intValue()))
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public DataResponse getYearlyProductsSold() {
+        return DataResponse.ok(orderDetailRepository.findYearlyProductsSold().stream()
+                .map(result -> new YearlyProductsSoldDTO((Integer) result[0], ((Number) result[1]).intValue()))
                 .collect(Collectors.toList()));
     }
 }
