@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.tpsolution.animestore.repository.ProductCriteriaRepository.*;
 
@@ -464,5 +465,48 @@ public class ProductService implements ProductServiceImp {
         productPriceHistoryRepository.save(priceHistory);
 
         return DataResponse.ok(product);
+    }
+
+    @Transactional
+    @Override
+    public void applyFlashSale(List<Integer> productIds, double discountPercentage) {
+        productIds.forEach(productId -> {
+            Product product = productRepository.findById(UUID.fromString(String.valueOf(productId))).orElseThrow();
+            product.setProductPrice((int) (product.getProductPrice() * (1 - discountPercentage / 100)));
+            product.setDiscount(discountPercentage + "%");
+            productRepository.save(product);
+        });
+    }
+
+    @Transactional
+    @Override
+    public void revertFlashSale(List<Integer> productIds, double discountPercentage) {
+        productIds.forEach(productId -> {
+            Product product = productRepository.findById(UUID.fromString(String.valueOf(productId))).orElseThrow();
+            product.setProductPrice((int) (product.getProductPrice() / (1 - discountPercentage / 100)));
+            product.setDiscount(null);
+            productRepository.save(product);
+        });
+    }
+
+    @Transactional
+    @Override
+    public void uploadNewProducts(List<Product> products) {
+        productRepository.saveAll(products);
+    }
+
+    @Transactional
+    @Override
+    public void deactivateOutOfStockProducts() {
+        Iterable<Product> productsIterable = productRepository.findAll();
+        List<Product> products = StreamSupport.stream(productsIterable.spliterator(), false)
+                .collect(Collectors.toList());
+
+        products.forEach(product -> {
+            if (product.getProductQuantity() <= 0) {
+                product.setDeleted(true);
+                productRepository.save(product);
+            }
+        });
     }
 }

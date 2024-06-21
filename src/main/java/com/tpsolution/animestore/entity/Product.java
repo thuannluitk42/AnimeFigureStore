@@ -43,10 +43,10 @@ public class Product implements Serializable {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(name = "is_deleted",nullable = true)
+    @Column(name = "is_deleted", nullable = true, columnDefinition = "TINYINT(1) DEFAULT 0")
     private boolean isDeleted;
 
-    @Column(name = "created_date",nullable = true)
+    @Column(name = "created_date", nullable = true, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date createdDate;
     @Column(name = "updated_at",nullable = true)
     private LocalDateTime updatedAt;
