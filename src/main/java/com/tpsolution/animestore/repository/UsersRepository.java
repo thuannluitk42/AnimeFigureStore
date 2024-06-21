@@ -31,5 +31,7 @@ public interface UsersRepository extends CrudRepository<Users, UUID>, JpaSpecifi
     @Query("SELECT COUNT(u) FROM Users u WHERE u.isLogged = true")
     long countActiveUsers();
 
+    List<Users> findAllByDobMonthAndDobDay(int month, int day);
+
 }
 

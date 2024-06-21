@@ -2,7 +2,6 @@ package com.tpsolution.animestore.schedule;
 
 import com.tpsolution.animestore.entity.Voucher;
 import com.tpsolution.animestore.repository.VoucherRepository;
-import com.tpsolution.animestore.service.imp.VoucherSchedulerServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class VoucherSchedulerService implements VoucherSchedulerServiceImp {
+public class VoucherSchedulerService {
 
     @Autowired
     private VoucherRepository voucherRepository;

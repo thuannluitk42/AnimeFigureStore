@@ -2,9 +2,11 @@ package com.tpsolution.animestore.service;
 
 import com.tpsolution.animestore.constant.StringConstant;
 import com.tpsolution.animestore.dto.EmailDetails;
+import com.tpsolution.animestore.entity.Users;
 import com.tpsolution.animestore.service.imp.EmailServiceImpl;
 import com.tpsolution.animestore.utils.CommonUtils;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -139,6 +141,24 @@ public class EmailService implements EmailServiceImpl {
             return "Mail sent Successfully";
         } catch (Exception e) {
             return "Error while Sending Mail";
+        }
+    }
+
+    @Override
+    public void sendBirthdayEmail(Users user) {
+        logger.info("#sendBirthdayEmail email: {}", user.getEmail());
+        MimeMessage message = javaMailSender.createMimeMessage();
+        try {
+            message.setSubject("Happy Birthday!");
+            message.setFrom(sender);
+            message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(user.getEmail()));
+            // Build email content with user's name and birthday wishes
+            String content = "Happy Birthday, " + user.getFullname() + "!";
+            message.setContent(content, "text/plain");
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            // handle email sending exceptions
+            e.printStackTrace();
         }
     }
 

@@ -34,8 +34,9 @@ public class EmailController {
     }
 
     @PostMapping("/send-email-forgot-pw")
-    public String sendEmailForgotPW(@RequestBody EmailDetails details) throws MessagingException {
+    public String sendEmailForgotPW(@RequestBody EmailDetails details) {
         String status = emailService.sendEmaiForgotPW(details);
         return status;
     }
+
 }
